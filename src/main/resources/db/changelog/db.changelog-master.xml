@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet id="1.0.0" author="pluhin">
+    <createTable tableName="posts">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="text" type="TEXT"/>
+      <column name="photo" type="TEXT"/>
+      <column name="date" type="datetime"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="1.0.1" author="pluhin">
+    <comment>add admins table</comment>
+    <createTable tableName="admins">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="telegram_id" type="bigint">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="username" type="varchar(20)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="v1.0.2" author="pluhin">
+    <comment>add posts history</comment>
+    <createTable tableName="posts_history">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="public_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="post_number" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="v1.0.3" author="pluhin">
+    <comment>add sources</comment>
+    <createTable tableName="sources">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="domain_type" type="varchar(15)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="domain_id" type="varchar(15)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="image_url" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="name" type="varchar(25)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="v1.0.4" author="pluhin">
+    <comment>add utf8</comment>
+    <sql>
+      ALTER TABLE sources MODIFY COLUMN name VARCHAR(25)
+      CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet id="v1.0.5" author="pluhin">
+    <comment>add utf8</comment>
+    <sql>
+      ALTER TABLE sources MODIFY COLUMN name VARCHAR(255)
+      CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet id="v1.0.6" author="pluhin">
+    <comment>add posts history</comment>
+    <dropTable tableName="posts_history"/>
+    <createTable tableName="posts_history">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="source_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="source_domain_type" type="varchar(15)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="source_domain_id" type="varchar(15)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_posted" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status" type="varchar(10)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <createIndex tableName="posts_history" indexName="source_domain_id_idx">
+      <column name="source_domain_type"/>
+      <column name="source_domain_id"/>
+    </createIndex>
+    <createIndex tableName="posts_history" indexName="source_domain_id_status_idx">
+      <column name="source_domain_type"/>
+      <column name="source_domain_id"/>
+      <column name="status"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="v1.0.7" author="pluhin">
+    <comment>add queue table</comment>
+    <createTable tableName="queue">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" unique="true" nullable="false"/>
+      </column>
+      <column name="image_url" type="varchar(255)"/>
+      <column name="text" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_added" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_retrieve" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status" type="varchar(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="source_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="domain_type" type="varchar(15)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="domain_id" type="varchar(15)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="queue_id" type="varchar(100)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <createIndex tableName="queue" indexName="queue_id_idx">
+      <column name="queue_id"/>
+    </createIndex>
+    <createIndex tableName="queue" indexName="queue_id_date_added_idx">
+      <column name="queue_id"/>
+      <column name="date_added"/>
+    </createIndex>
+    <createIndex tableName="queue" indexName="status_idx">
+      <column name="status"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="v1.0.8" author="pluhin">
+    <comment>add system settings</comment>
+    <createTable tableName="system_settings">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" unique="true" nullable="false"/>
+      </column>
+      <column name="settings_key" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="settings_value" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <createIndex tableName="system_settings" indexName="settings_key_idx">
+      <column name="settings_key"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="v1.0.9" author="pluhin">
+    <comment>add utf8</comment>
+    <sql>
+      ALTER TABLE queue MODIFY COLUMN text TEXT
+      CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>
