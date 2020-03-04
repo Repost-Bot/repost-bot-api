@@ -33,6 +33,6 @@ public class DefaultNotificationService implements NotificationService {
 
   private String getCreatedQueueMessage(String queueId) {
     String hostname = systemSettingsService.getProperty("system.hostname");
-    return "Created queue: " + hostname + queueId;
+    return "Created queue: " + hostname + "/queue/" + queueId;
   }
 }
