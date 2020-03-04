@@ -12,11 +12,13 @@ public class DefaultNotificationService implements NotificationService {
 
   private final RepostBot repostBot;
   private final AdminsRepository adminsRepository;
+  private final SystemSettingsService systemSettingsService;
 
   public DefaultNotificationService(RepostBot repostBot,
-      AdminsRepository adminsRepository) {
+      AdminsRepository adminsRepository, SystemSettingsService systemSettingsService) {
     this.repostBot = repostBot;
     this.adminsRepository = adminsRepository;
+    this.systemSettingsService = systemSettingsService;
   }
 
   @Override
@@ -30,6 +32,7 @@ public class DefaultNotificationService implements NotificationService {
   }
 
   private String getCreatedQueueMessage(String queueId) {
-    return String.format("Created queue with id %s", queueId);
+    String hostname = systemSettingsService.getProperty("system.hostname");
+    return "Created queue: " + hostname + queueId;
   }
 }
