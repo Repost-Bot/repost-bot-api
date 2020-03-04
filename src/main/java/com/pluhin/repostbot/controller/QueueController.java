@@ -52,7 +52,7 @@ public class QueueController {
     return ResponseEntity.noContent().build();
   }
 
-  @Scheduled(cron = "0 0 * * *")
+  @Scheduled(cron = "0 0 0 * * *")
   @PostMapping
   public ResponseEntity<Void> createQueue() {
     LOGGER.info("[Queue] Start creating queue");
@@ -60,7 +60,7 @@ public class QueueController {
     return ResponseEntity.noContent().build();
   }
 
-  @Scheduled(cron = "0 * * * *")
+  @Scheduled(cron = "0 0 * * * *")
   @PostMapping("/process")
   public ResponseEntity<Void> processQueue() {
     LOGGER.info("[Queue] Start processing queue");
