@@ -3,6 +3,7 @@ package com.pluhin.repostbot.config;
 import com.pluhin.repostbot.repository.QueueRepository;
 import com.pluhin.repostbot.service.DefaultQueueCreateService;
 import com.pluhin.repostbot.service.DefaultQueueService;
+import com.pluhin.repostbot.service.FilterGetPostsService;
 import com.pluhin.repostbot.service.GetPostsService;
 import com.pluhin.repostbot.service.HistoryGetPostsService;
 import com.pluhin.repostbot.service.NotificationService;
@@ -11,6 +12,8 @@ import com.pluhin.repostbot.service.PostsHistoryService;
 import com.pluhin.repostbot.service.QueueCreateService;
 import com.pluhin.repostbot.service.QueueService;
 import com.pluhin.repostbot.service.SystemSettingsService;
+import com.pluhin.repostbot.service.conditions.HasCorrectLengthCondition;
+import com.pluhin.repostbot.service.conditions.HasImagePostCondition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -54,9 +57,13 @@ public class QueueServiceConfig {
   }
 
   private GetPostsService getPostsService() {
-    return new HistoryGetPostsService(
-        postsHistoryService,
-        postsServiceConfig.getPostsService()
+    return new FilterGetPostsService(
+        new HistoryGetPostsService(
+            postsHistoryService,
+            postsServiceConfig.getPostsService()
+        ),
+        new HasImagePostCondition(),
+        new HasCorrectLengthCondition()
     );
   }
 }
