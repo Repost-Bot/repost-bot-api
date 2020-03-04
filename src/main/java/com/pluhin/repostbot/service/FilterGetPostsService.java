@@ -41,8 +41,8 @@ public class FilterGetPostsService implements GetPostsService {
     return conditions
         .stream()
         .map(condition -> condition.test(post))
-        .filter(it -> it)
+        .filter(it -> !it)
         .findAny()
-        .orElse(false);
+        .orElse(true);
   }
 }
