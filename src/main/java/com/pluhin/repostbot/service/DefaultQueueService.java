@@ -83,6 +83,7 @@ public class DefaultQueueService implements QueueService {
     QueueEntity entity = queueRepository.findById(id).get();
     QueueEntity newEntity = queueCreateService.create(1L, entity.getQueueId()).get(0);
     newEntity.setDateRetrieve(entity.getDateRetrieve());
+    newEntity.setDateAdded(entity.getDateAdded());
     queueRepository.save(newEntity);
   }
 
