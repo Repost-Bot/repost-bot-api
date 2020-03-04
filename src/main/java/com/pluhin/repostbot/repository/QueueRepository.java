@@ -18,5 +18,5 @@ public interface QueueRepository extends JpaRepository<QueueEntity, Long> {
       + "GROUP BY q.queueId, q.dateAdded")
   List<QueueDTO> getQueueIdAndDate();
 
-  List<QueueEntity> getByStatusAndDateRetrieveLessThan(PostStatus status, LocalDateTime date);
+  List<QueueEntity> getByStatusAndDateRetrieveLessThanEqual(PostStatus status, LocalDateTime date);
 }

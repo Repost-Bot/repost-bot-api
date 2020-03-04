@@ -42,7 +42,12 @@ public class DefaultQueueService implements QueueService {
       QueueEntity entity = entities.get(i);
       Integer hour = Integer.parseInt(hours[i]);
 
-      LocalDateTime dateRetrieve = LocalDateTime.now().plusDays(1).withHour(hour);
+      LocalDateTime dateRetrieve = LocalDateTime.now()
+          .plusDays(1)
+          .withHour(hour)
+          .withMinute(0)
+          .withSecond(0)
+          .withNano(0);
       entity.setDateRetrieve(dateRetrieve);
     }
 
@@ -51,7 +56,7 @@ public class DefaultQueueService implements QueueService {
 
   @Override
   public void processQueue() {
-    queueRepository.getByStatusAndDateRetrieveLessThan(APPROVED, LocalDateTime.now())
+    queueRepository.getByStatusAndDateRetrieveLessThanEqual(APPROVED, LocalDateTime.now())
         .stream()
         .forEach(entity -> {
           SourceDomainId domainId = new SourceDomainId(
