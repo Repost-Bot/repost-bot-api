@@ -1,6 +1,7 @@
 package com.pluhin.repostbot.service;
 
 import com.pluhin.repostbot.entity.SystemSettingsEntity;
+import com.pluhin.repostbot.exception.NoSystemSettingException;
 import com.pluhin.repostbot.model.SystemSettingsDTO;
 import com.pluhin.repostbot.repository.SystemSettingsRepository;
 import java.util.List;
@@ -43,6 +44,10 @@ public class DefaultSystemSettingsService implements SystemSettingsService {
   }
 
   public String getProperty(String key) {
-    return repository.getBySettingsKey(key).getSettingsValue();
+    SystemSettingsEntity entity = repository.getBySettingsKey(key);
+    if (entity == null) {
+      throw new NoSystemSettingException(key);
+    }
+    return entity.getSettingsValue();
   }
 }

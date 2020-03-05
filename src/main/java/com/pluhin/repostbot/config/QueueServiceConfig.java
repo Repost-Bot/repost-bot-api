@@ -8,6 +8,7 @@ import com.pluhin.repostbot.service.GetPostsService;
 import com.pluhin.repostbot.service.HistoryGetPostsService;
 import com.pluhin.repostbot.service.NotificationService;
 import com.pluhin.repostbot.service.NotifyQueueCreateService;
+import com.pluhin.repostbot.service.PersistingQueueCreateService;
 import com.pluhin.repostbot.service.PostsHistoryService;
 import com.pluhin.repostbot.service.QueueCreateService;
 import com.pluhin.repostbot.service.QueueService;
@@ -41,18 +42,21 @@ public class QueueServiceConfig {
     return new DefaultQueueService(
         queueCreateService(),
         systemSettingsService,
-        queueRepository,
-        postsServiceConfig.createPostService()
+        postsServiceConfig.createPostService(),
+        queueRepository
     );
   }
 
   private QueueCreateService queueCreateService() {
     return new NotifyQueueCreateService(
-        new DefaultQueueCreateService(
-            systemSettingsService,
-            getPostsService()
-        ),
-        notificationService
+        notificationService,
+        new PersistingQueueCreateService(
+            queueRepository,
+            new DefaultQueueCreateService(
+                systemSettingsService,
+                getPostsService()
+            )
+        )
     );
   }
 

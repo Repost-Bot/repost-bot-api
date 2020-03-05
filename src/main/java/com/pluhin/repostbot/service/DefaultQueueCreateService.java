@@ -22,15 +22,18 @@ public class DefaultQueueCreateService implements QueueCreateService {
   }
 
   @Override
-  public List<QueueEntity> create(Long count, String queueId) {
+  public List<QueueEntity> create(String queueId, List<Integer> hours) {
     SourceDomainId domainId = createDomainId();
-    List<PostDTO> posts = getPostsService.getPosts(domainId, count, 0L);
+    Long count = ((Integer) hours.size()).longValue();
+    Long offset = Long.valueOf(systemSettingsService.getProperty("queue.default.offset"));
+    List<PostDTO> posts = getPostsService.getPosts(domainId, count, offset);
     List<QueueEntity> entities = new ArrayList<>(posts.size());
 
-    for (int i = 0; i < posts.size(); i++) {
+    for (int i = 0; i < count; i++) {
       PostDTO postDTO = posts.get(i);
+      Integer hour = hours.get(i);
 
-      QueueEntity entity = createQueueEntity(domainId, postDTO, queueId);
+      QueueEntity entity = createQueueEntity(domainId, postDTO, queueId, hour);
       entities.add(entity);
     }
 
@@ -40,12 +43,20 @@ public class DefaultQueueCreateService implements QueueCreateService {
   private QueueEntity createQueueEntity(
       SourceDomainId domainId,
       PostDTO postDTO,
-      String queueId
+      String queueId,
+      Integer hour
   ) {
     String imageUrl = Optional.ofNullable(postDTO.getImages())
         .filter(images -> images.size() > 0)
         .map(images -> images.get(0))
         .orElse(null);
+
+    LocalDateTime dateRetrieve = LocalDateTime.now()
+        .plusDays(1)
+        .withHour(hour)
+        .withMinute(0)
+        .withSecond(0)
+        .withNano(0);
 
     QueueEntity queueEntity = new QueueEntity();
     queueEntity.setDomainid(domainId.getDomainId());
@@ -56,6 +67,7 @@ public class DefaultQueueCreateService implements QueueCreateService {
     queueEntity.setSourceId(postDTO.getSourceId());
     queueEntity.setStatus(PostStatus.CREATED);
     queueEntity.setQueueId(queueId);
+    queueEntity.setDateRetrieve(dateRetrieve);
     return queueEntity;
   }
 

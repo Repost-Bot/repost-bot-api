@@ -1,6 +1,7 @@
 package com.pluhin.repostbot.service;
 
 import static com.pluhin.repostbot.model.PostStatus.APPROVED;
+import static com.pluhin.repostbot.model.PostStatus.DELIVERED;
 import static java.util.Arrays.asList;
 
 import com.pluhin.repostbot.entity.QueueEntity;
@@ -11,6 +12,7 @@ import com.pluhin.repostbot.model.QueuePostDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
 import com.pluhin.repostbot.repository.QueueRepository;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,39 +21,23 @@ public class DefaultQueueService implements QueueService {
 
   private final QueueCreateService queueCreateService;
   private final SystemSettingsService systemSettingsService;
-  private final QueueRepository queueRepository;
   private final CreatePostService createPostService;
+  private final QueueRepository queueRepository;
 
   public DefaultQueueService(QueueCreateService queueCreateService,
-      SystemSettingsService systemSettingsService, QueueRepository queueRepository,
-      CreatePostService createPostService) {
+      SystemSettingsService systemSettingsService,
+      CreatePostService createPostService, QueueRepository queueRepository) {
     this.queueCreateService = queueCreateService;
     this.systemSettingsService = systemSettingsService;
-    this.queueRepository = queueRepository;
     this.createPostService = createPostService;
+    this.queueRepository = queueRepository;
   }
 
   @Override
   public void createQueue() {
     String queueId = UUID.randomUUID().toString().replace("-", "");
-    String[] hours = systemSettingsService.getProperty("queue.default.hours").split(",");
-    Long count = ((Integer) hours.length).longValue();
-    List<QueueEntity> entities = queueCreateService.create(count, queueId);
-
-    for(int i = 0; i < hours.length; i++) {
-      QueueEntity entity = entities.get(i);
-      Integer hour = Integer.parseInt(hours[i]);
-
-      LocalDateTime dateRetrieve = LocalDateTime.now()
-          .plusDays(1)
-          .withHour(hour)
-          .withMinute(0)
-          .withSecond(0)
-          .withNano(0);
-      entity.setDateRetrieve(dateRetrieve);
-    }
-
-    queueRepository.saveAll(entities);
+    List<Integer> hours = getHours();
+    queueCreateService.create(queueId, hours);
   }
 
   @Override
@@ -68,6 +54,7 @@ public class DefaultQueueService implements QueueService {
               entity.getText()
           );
           createPostService.createPost(domainId, post);
+          changeQueuePostStatus(entity.getId(), DELIVERED);
         });
   }
 
@@ -81,10 +68,8 @@ public class DefaultQueueService implements QueueService {
   @Override
   public void changeQueuePost(Long id) {
     QueueEntity entity = queueRepository.findById(id).get();
-    QueueEntity newEntity = queueCreateService.create(1L, entity.getQueueId()).get(0);
-    newEntity.setDateRetrieve(entity.getDateRetrieve());
-    newEntity.setDateAdded(entity.getDateAdded());
-    queueRepository.save(newEntity);
+    List<Integer> hour = Arrays.asList(entity.getDateRetrieve().getHour());
+    queueCreateService.create(entity.getQueueId(), hour).get(0);
   }
 
   @Override
@@ -109,5 +94,11 @@ public class DefaultQueueService implements QueueService {
   @Override
   public List<QueueDTO> getAllQueues() {
     return queueRepository.getQueueIdAndDate();
+  }
+
+  private List<Integer> getHours() {
+    return Arrays.stream(systemSettingsService.getProperty("queue.default.hours").split(","))
+        .map(Integer::valueOf)
+        .collect(Collectors.toList());
   }
 }

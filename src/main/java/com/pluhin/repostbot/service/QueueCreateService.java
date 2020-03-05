@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface QueueCreateService {
 
-  List<QueueEntity> create(Long count, String queueId);
+  List<QueueEntity> create(String queueId, List<Integer> hours);
 }
