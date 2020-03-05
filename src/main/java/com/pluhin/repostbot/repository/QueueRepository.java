@@ -19,4 +19,6 @@ public interface QueueRepository extends JpaRepository<QueueEntity, Long> {
   List<QueueDTO> getQueueIdAndDate();
 
   List<QueueEntity> getByStatusAndDateRetrieveLessThanEqual(PostStatus status, LocalDateTime date);
+
+  Long countAllByStatus(PostStatus status);
 }
