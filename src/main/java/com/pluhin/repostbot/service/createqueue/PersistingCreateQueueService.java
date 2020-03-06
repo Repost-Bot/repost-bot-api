@@ -52,8 +52,8 @@ public class PersistingCreateQueueService implements CreateQueueService {
       Integer hour
   ) {
     String imageUrl = Optional.ofNullable(postDTO.getImages())
-        .filter(images -> images.size() > 0)
-        .map(images -> images.get(0))
+        .filter(images -> !images.isEmpty())
+        .map(images -> String.join(",", images))
         .orElse(null);
 
     LocalDateTime dateRetrieve = LocalDateTime.now()

@@ -18,7 +18,11 @@ public class DefaultCreatePostService implements CreatePostService {
   @Override
   public void createPost(SourceDomainId domainId, PostDTO post) {
     try {
-      botService.sendPost(post.getImages().get(0), post.getText());
+      if (post.getImages().size() > 1) {
+        botService.sendPost(post.getImages(), post.getText());
+      } else {
+        botService.sendPost(post.getImages().get(0), post.getText());
+      }
       postsHistoryService.savePost(domainId, post, PostStatus.DELIVERED);
     } catch (Exception ex) {
       postsHistoryService.savePost(domainId, post, PostStatus.ERROR);

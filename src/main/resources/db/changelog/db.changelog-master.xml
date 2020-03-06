@@ -195,4 +195,6 @@
     </sql>
   </changeSet>
 
+  <include file="data/db.changelog-1.1.xml" relativeToChangelogFile="true"/>
+
 </databaseChangeLog>

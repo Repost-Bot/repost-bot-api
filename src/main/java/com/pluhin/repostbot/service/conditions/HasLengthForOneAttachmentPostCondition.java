@@ -10,7 +10,7 @@ public class HasLengthForOneAttachmentPostCondition implements PostCondition {
   @Override
   public Boolean test(SourceDomainId domainId, PostDTO post) {
     return post.getImages() != null
-        && post.getImages().size() <= 1
+        && post.getImages().size() == 1
         && post.getText() != null
         && post.getText().length() <= MAX_LENGTH;
   }

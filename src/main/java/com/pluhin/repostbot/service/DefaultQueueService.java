@@ -54,7 +54,7 @@ public class DefaultQueueService implements QueueService {
           );
           PostDTO post = new PostDTO(
               entity.getSourceId(),
-              asList(entity.getImageUrl()),
+              asList(entity.getImageUrl().split(",")),
               entity.getText()
           );
           createPostService.createPost(domainId, post);
