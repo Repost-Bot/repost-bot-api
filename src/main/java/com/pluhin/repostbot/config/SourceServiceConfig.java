@@ -1,9 +1,9 @@
 package com.pluhin.repostbot.config;
 
 import com.pluhin.repostbot.model.domainid.SourceDomainType;
-import com.pluhin.repostbot.service.DefaultGetSourceInfoService;
-import com.pluhin.repostbot.service.GetSourceInfoService;
-import com.pluhin.repostbot.service.VkGetSourceInfoService;
+import com.pluhin.repostbot.service.getsource.DefaultGetSourceInfoService;
+import com.pluhin.repostbot.service.getsource.GetSourceInfoService;
+import com.pluhin.repostbot.service.getsource.VkGetSourceInfoService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

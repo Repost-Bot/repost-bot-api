@@ -1,4 +1,4 @@
-package com.pluhin.repostbot.service;
+package com.pluhin.repostbot.service.getsource;
 
 import com.pluhin.repostbot.exception.GetSourceInfoException;
 import com.pluhin.repostbot.model.PostsSourceDTO;

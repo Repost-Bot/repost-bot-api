@@ -3,6 +3,7 @@ package com.pluhin.repostbot.service.getposts;
 import com.pluhin.repostbot.model.PostDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
 import com.pluhin.repostbot.model.domainid.SourceDomainType;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class DefaultGetPostsService implements GetPostsService {
 
   public static class Builder {
 
-    private Map<SourceDomainType, GetPostsService> dictionary = new HashMap<>();
+    private Map<SourceDomainType, GetPostsService> dictionary = new EnumMap(SourceDomainType.class);
 
     public Builder put(SourceDomainType type, GetPostsService service) {
       dictionary.put(type, service);

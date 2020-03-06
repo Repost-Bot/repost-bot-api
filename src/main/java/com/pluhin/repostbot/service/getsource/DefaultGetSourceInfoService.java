@@ -1,8 +1,9 @@
-package com.pluhin.repostbot.service;
+package com.pluhin.repostbot.service.getsource;
 
 import com.pluhin.repostbot.model.PostsSourceDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
 import com.pluhin.repostbot.model.domainid.SourceDomainType;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class DefaultGetSourceInfoService implements GetSourceInfoService {
 
   public static class Builder {
 
-    private Map<SourceDomainType, GetSourceInfoService> dictionary = new HashMap<>();
+    private Map<SourceDomainType, GetSourceInfoService> dictionary = new EnumMap(SourceDomainType.class);
 
     public Builder put(SourceDomainType type, GetSourceInfoService service) {
       dictionary.put(type, service);

@@ -4,6 +4,7 @@ import com.pluhin.repostbot.entity.SourcesEntity;
 import com.pluhin.repostbot.model.PostsSourceDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
 import com.pluhin.repostbot.repository.SourcesRepository;
+import com.pluhin.repostbot.service.getsource.GetSourceInfoService;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
