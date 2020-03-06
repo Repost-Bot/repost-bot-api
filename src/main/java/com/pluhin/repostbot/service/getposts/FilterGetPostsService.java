@@ -7,8 +7,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FilterGetPostsService implements GetPostsService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(FilterGetPostsService.class);
 
   private final GetPostsService delegate;
   private final List<PostCondition> conditions;
@@ -26,6 +30,8 @@ public class FilterGetPostsService implements GetPostsService {
         .stream()
         .filter(this::filter)
         .collect(Collectors.toList());
+
+    LOGGER.info("Fetched {} posts ", posts.size());
 
     if (posts.size() < count) {
       return Stream.concat(

@@ -9,8 +9,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PersistingCreateQueueService implements CreateQueueService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(PersistingCreateQueueService.class);
 
   private final CreateQueueService delegate;
   private final QueueRepository queueRepository;
@@ -35,6 +39,7 @@ public class PersistingCreateQueueService implements CreateQueueService {
       entities.add(entity);
     }
 
+    LOGGER.info("Persisting {} entities for queueId {}", entities.size(), queueId);
     queueRepository.saveAll(entities);
 
     return posts;

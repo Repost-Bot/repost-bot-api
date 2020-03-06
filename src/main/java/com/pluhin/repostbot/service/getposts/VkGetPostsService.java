@@ -40,6 +40,7 @@ public class VkGetPostsService implements GetPostsService {
     List<Long> historyIds = postsHistoryService.getSourceIdsFromHistory(domainId);
     Integer finalCount = getCount(count, historyIds).intValue();
     Integer finalOffset = getOffset(offset, historyIds).intValue();
+    LOGGER.info("Fetching vk posts for count {} and offest {}, limit {}", finalCount, finalOffset, count);
     try {
       return client.wall().get(actor)
           .ownerId(-ownerId)
