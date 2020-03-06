@@ -187,4 +187,12 @@
     </sql>
   </changeSet>
 
+  <changeSet id="v1.0.10" author="pluhin">
+    <comment>add utf8</comment>
+    <sql>
+      ALTER TABLE queue MODIFY COLUMN text TEXT
+      CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL;
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>
