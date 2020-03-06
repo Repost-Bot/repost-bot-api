@@ -3,7 +3,6 @@ package com.pluhin.repostbot.service.getposts;
 import com.pluhin.repostbot.model.PostDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
 import com.pluhin.repostbot.service.conditions.PostCondition;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,20 +14,19 @@ public class FilterGetPostsService implements GetPostsService {
   private static final Logger LOGGER = LoggerFactory.getLogger(FilterGetPostsService.class);
 
   private final GetPostsService delegate;
-  private final List<PostCondition> conditions;
+  private final PostCondition condition;
 
-  public FilterGetPostsService(
-      GetPostsService delegate,
-      PostCondition... conditions) {
+  public FilterGetPostsService(GetPostsService delegate,
+      PostCondition condition) {
     this.delegate = delegate;
-    this.conditions = Arrays.asList(conditions);
+    this.condition = condition;
   }
 
   @Override
   public List<PostDTO> getPosts(SourceDomainId domainId, Long count, Long offset) {
     List<PostDTO> posts = delegate.getPosts(domainId, count, offset)
         .stream()
-        .filter(post -> filter(domainId, post))
+        .filter(post -> condition.test(domainId, post))
         .collect(Collectors.toList());
 
     LOGGER.info("Fetched {} posts ", posts.size());
@@ -42,12 +40,5 @@ public class FilterGetPostsService implements GetPostsService {
     }
 
     return posts;
-  }
 
-  private Boolean filter(SourceDomainId domainId, PostDTO post) {
-    return conditions
-        .stream()
-        .map(condition -> condition.test(domainId, post))
-        .reduce(true, (a, b) -> a && b);
-  }
 }
