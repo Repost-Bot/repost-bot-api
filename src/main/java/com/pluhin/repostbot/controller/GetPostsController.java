@@ -3,7 +3,7 @@ package com.pluhin.repostbot.controller;
 import com.pluhin.repostbot.model.PostDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
 import com.pluhin.repostbot.model.domainid.SourceDomainType;
-import com.pluhin.repostbot.service.GetPostsService;
+import com.pluhin.repostbot.service.getposts.GetPostsService;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

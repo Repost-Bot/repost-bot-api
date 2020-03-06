@@ -3,10 +3,13 @@ package com.pluhin.repostbot.config;
 import com.pluhin.repostbot.model.domainid.SourceDomainType;
 import com.pluhin.repostbot.service.CreatePostService;
 import com.pluhin.repostbot.service.DefaultCreatePostService;
-import com.pluhin.repostbot.service.DefaultGetPostsService;
-import com.pluhin.repostbot.service.GetPostsService;
+import com.pluhin.repostbot.service.conditions.HasCorrectLengthCondition;
+import com.pluhin.repostbot.service.conditions.HasImagePostCondition;
+import com.pluhin.repostbot.service.getposts.DefaultGetPostsService;
+import com.pluhin.repostbot.service.getposts.FilterGetPostsService;
+import com.pluhin.repostbot.service.getposts.GetPostsService;
 import com.pluhin.repostbot.service.PostsHistoryService;
-import com.pluhin.repostbot.service.VkGetPostsService;
+import com.pluhin.repostbot.service.getposts.VkGetPostsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,6 +41,10 @@ public class PostsServiceConfig {
   }
 
   private GetPostsService vkService() {
-    return new VkGetPostsService(vkConfig.vkApiClient(), vkConfig.serviceActor(), postsHistoryService);
+    return new FilterGetPostsService(
+        new VkGetPostsService(vkConfig.vkApiClient(), vkConfig.serviceActor(), postsHistoryService),
+        new HasImagePostCondition(),
+        new HasCorrectLengthCondition()
+    );
   }
 }

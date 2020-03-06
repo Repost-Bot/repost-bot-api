@@ -10,7 +10,9 @@ import com.pluhin.repostbot.model.PostStatus;
 import com.pluhin.repostbot.model.QueueDTO;
 import com.pluhin.repostbot.model.QueuePostDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
+import com.pluhin.repostbot.model.domainid.SourceDomainType;
 import com.pluhin.repostbot.repository.QueueRepository;
+import com.pluhin.repostbot.service.createqueue.CreateQueueService;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -19,15 +21,15 @@ import java.util.stream.Collectors;
 
 public class DefaultQueueService implements QueueService {
 
-  private final QueueCreateService queueCreateService;
+  private final CreateQueueService createQueueService;
   private final SystemSettingsService systemSettingsService;
   private final CreatePostService createPostService;
   private final QueueRepository queueRepository;
 
-  public DefaultQueueService(QueueCreateService queueCreateService,
-      SystemSettingsService systemSettingsService,
-      CreatePostService createPostService, QueueRepository queueRepository) {
-    this.queueCreateService = queueCreateService;
+  public DefaultQueueService(CreateQueueService createQueueService,
+      SystemSettingsService systemSettingsService, CreatePostService createPostService,
+      QueueRepository queueRepository) {
+    this.createQueueService = createQueueService;
     this.systemSettingsService = systemSettingsService;
     this.createPostService = createPostService;
     this.queueRepository = queueRepository;
@@ -37,7 +39,7 @@ public class DefaultQueueService implements QueueService {
   public void createQueue() {
     String queueId = UUID.randomUUID().toString().replace("-", "");
     List<Integer> hours = getHours();
-    queueCreateService.create(queueId, hours);
+    createQueueService.createQueue(createDomainId(), queueId, hours);
   }
 
   @Override
@@ -69,7 +71,7 @@ public class DefaultQueueService implements QueueService {
   public void changeQueuePost(Long id) {
     QueueEntity entity = queueRepository.findById(id).get();
     List<Integer> hour = Arrays.asList(entity.getDateRetrieve().getHour());
-    queueCreateService.create(entity.getQueueId(), hour).get(0);
+    createQueueService.createQueue(createDomainId(), entity.getQueueId(), hour).get(0);
   }
 
   @Override
@@ -100,5 +102,15 @@ public class DefaultQueueService implements QueueService {
     return Arrays.stream(systemSettingsService.getProperty("queue.default.hours").split(","))
         .map(Integer::valueOf)
         .collect(Collectors.toList());
+  }
+
+  private SourceDomainId createDomainId() {
+    String domainId = systemSettingsService.getProperty("queue.default.source.id");
+    String domainType = systemSettingsService.getProperty("queue.default.source.type");
+
+    return new SourceDomainId(
+        SourceDomainType.valueOf(domainType),
+        domainId
+    );
   }
 }

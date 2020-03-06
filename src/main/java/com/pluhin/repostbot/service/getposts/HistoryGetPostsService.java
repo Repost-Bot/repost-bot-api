@@ -1,8 +1,9 @@
-package com.pluhin.repostbot.service;
+package com.pluhin.repostbot.service.getposts;
 
 import com.pluhin.repostbot.model.PostDTO;
 import com.pluhin.repostbot.model.PostStatus;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
+import com.pluhin.repostbot.service.PostsHistoryService;
 import java.util.List;
 
 public class HistoryGetPostsService implements GetPostsService {

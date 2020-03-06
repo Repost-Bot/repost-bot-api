@@ -1,12 +1,12 @@
-package com.pluhin.repostbot.service;
+package com.pluhin.repostbot.service.getposts;
 
 import com.pluhin.repostbot.model.PostDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
 import com.pluhin.repostbot.service.conditions.PostCondition;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FilterGetPostsService implements GetPostsService {
 
@@ -22,27 +22,26 @@ public class FilterGetPostsService implements GetPostsService {
 
   @Override
   public List<PostDTO> getPosts(SourceDomainId domainId, Long count, Long offset) {
-    List<PostDTO> result = new ArrayList<>();
+    List<PostDTO> posts = delegate.getPosts(domainId, count, offset)
+        .stream()
+        .filter(this::filter)
+        .collect(Collectors.toList());
 
-    while (result.size() < count) {
-      List<PostDTO> posts = delegate.getPosts(domainId, count - result.size(), offset);
-      List<PostDTO> filtered = posts
-          .stream()
-          .filter(this::filter)
+    if (posts.size() < count) {
+      return Stream.concat(
+          posts.stream(),
+          getPosts(domainId, count - posts.size(), offset + count).stream()
+      )
           .collect(Collectors.toList());
-
-      result.addAll(filtered);
     }
 
-    return result;
+    return posts;
   }
 
   private Boolean filter(PostDTO post) {
     return conditions
         .stream()
         .map(condition -> condition.test(post))
-        .filter(it -> !it)
-        .findAny()
-        .orElse(true);
+        .reduce(true, (a, b) -> a && b);
   }
 }

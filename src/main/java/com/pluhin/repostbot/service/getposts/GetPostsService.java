@@ -1,4 +1,4 @@
-package com.pluhin.repostbot.service;
+package com.pluhin.repostbot.service.getposts;
 
 import com.pluhin.repostbot.model.PostDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;

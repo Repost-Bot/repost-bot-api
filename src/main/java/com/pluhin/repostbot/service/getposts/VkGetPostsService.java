@@ -1,8 +1,9 @@
-package com.pluhin.repostbot.service;
+package com.pluhin.repostbot.service.getposts;
 
 import com.pluhin.repostbot.exception.GetPostsException;
 import com.pluhin.repostbot.model.PostDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
+import com.pluhin.repostbot.service.PostsHistoryService;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -54,7 +55,7 @@ public class VkGetPostsService implements GetPostsService {
                   post.getText()
               )
           )
-          .limit(finalCount)
+          .limit(count)
           .collect(Collectors.toList());
     } catch (ApiException e) {
       LOGGER.error("Error fetching posts via api", e);

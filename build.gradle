@@ -1,11 +1,14 @@
 plugins {
+  id 'groovy'
   id 'java'
   id 'org.springframework.boot' version '2.0.5.RELEASE'
   id 'io.spring.dependency-management' version '1.0.7.RELEASE'
 }
 
-group 'com.pluhin'
-version '1.0-SNAPSHOT'
+ext['groovy.version'] = '2.5.8'
+
+group "${groupId}"
+version "${currentVersion}"
 
 sourceCompatibility = 1.8
 
@@ -18,18 +21,19 @@ repositories {
 }
 
 dependencies {
-  compile "org.telegram:telegrambots:4.6"
-  compile 'com.vk.api:sdk:0.5.12'
+  compile "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+  compile "org.springframework.boot:spring-boot-starter-web"
+  compile "org.springframework.boot:spring-boot-starter-data-jpa"
 
-  implementation 'org.springframework.boot:spring-boot-dependencies:2.0.5.RELEASE'
-  implementation 'org.springframework.boot:spring-boot-starter-web'
-  compile group: "org.cfg4j", name:"cfg4j-core", version: "4.4.1"
-  compile 'org.springframework.boot:spring-boot-starter-data-jpa'
-  compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.48'
+  compile "org.telegram:telegrambots:${telegramBotsVersion}"
+  compile "com.vk.api:sdk:${vkApiVersion}"
+  compile "org.cfg4j:cfg4j-core:${cfg4jVersion}"
+  compile "mysql:mysql-connector-java:${mysqlConnectorVersion}"
+  compile "org.liquibase:liquibase-core:${liquibaseVersion}"
+  compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
 
-  compile group: 'org.liquibase', name: 'liquibase-core', version: '3.8.7'
-
-  testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-  testCompile group: 'junit', name: 'junit', version: '4.12'
+  testCompile platform("org.spockframework:spock-bom:${spockVersion}")
+  testCompile "org.spockframework:spock-core"
+  testRuntime "net.bytebuddy:byte-buddy:1.9.3"
+  testRuntime "org.objenesis:objenesis:2.6"
 }
