@@ -5,6 +5,7 @@ import com.pluhin.repostbot.service.CreatePostService;
 import com.pluhin.repostbot.service.DefaultCreatePostService;
 import com.pluhin.repostbot.service.conditions.HasCorrectLengthCondition;
 import com.pluhin.repostbot.service.conditions.HasImagePostCondition;
+import com.pluhin.repostbot.service.conditions.NoHistoryPostCondition;
 import com.pluhin.repostbot.service.getposts.DefaultGetPostsService;
 import com.pluhin.repostbot.service.getposts.FilterGetPostsService;
 import com.pluhin.repostbot.service.getposts.GetPostsService;
@@ -42,9 +43,10 @@ public class PostsServiceConfig {
 
   private GetPostsService vkService() {
     return new FilterGetPostsService(
-        new VkGetPostsService(vkConfig.vkApiClient(), vkConfig.serviceActor(), postsHistoryService),
+        new VkGetPostsService(vkConfig.vkApiClient(), vkConfig.serviceActor()),
         new HasImagePostCondition(),
-        new HasCorrectLengthCondition()
+        new HasCorrectLengthCondition(),
+        new NoHistoryPostCondition(postsHistoryService)
     );
   }
 }

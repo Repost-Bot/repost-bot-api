@@ -75,17 +75,25 @@ public class TelegramRepostBot extends TelegramLongPollingBot implements RepostB
         .forEach(this::executeMethod);
   }
 
-  private void executeMethod(BotApiMethod botApiMethod) {
+  private void executeMethod(SendPhoto sendPhoto) {
     try {
-      execute(botApiMethod);
+      execute(sendPhoto);
     } catch (TelegramApiException e) {
       throw new CannotSendMessageException("Cannot execute tg bot api method", e);
     }
   }
 
-  private void executeMethod(PartialBotApiMethod botApiMethod) {
+  private void executeMethod(SendMessage sendMessage) {
     try {
-      execute(botApiMethod);
+      execute(sendMessage);
+    } catch (TelegramApiException e) {
+      throw new CannotSendMessageException("Cannot execute tg bot api method", e);
+    }
+  }
+
+  private void executeMethod(SendMediaGroup sendMediaGroup) {
+    try {
+      execute(sendMediaGroup);
     } catch (TelegramApiException e) {
       throw new CannotSendMessageException("Cannot execute tg bot api method", e);
     }

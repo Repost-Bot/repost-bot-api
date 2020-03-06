@@ -3,7 +3,6 @@ package com.pluhin.repostbot.service.getposts;
 import com.pluhin.repostbot.exception.GetPostsException;
 import com.pluhin.repostbot.model.PostDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
-import com.pluhin.repostbot.service.PostsHistoryService;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -25,31 +24,24 @@ public class VkGetPostsService implements GetPostsService {
 
   private final VkApiClient client;
   private final ServiceActor actor;
-  private final PostsHistoryService postsHistoryService;
 
-  public VkGetPostsService(VkApiClient client, ServiceActor actor,
-      PostsHistoryService postsHistoryService) {
+  public VkGetPostsService(VkApiClient client, ServiceActor actor) {
     this.client = client;
     this.actor = actor;
-    this.postsHistoryService = postsHistoryService;
   }
 
   @Override
   public List<PostDTO> getPosts(SourceDomainId domainId, Long count, Long offset) {
     Integer ownerId = Integer.parseInt(domainId.getDomainId());
-    List<Long> historyIds = postsHistoryService.getSourceIdsFromHistory(domainId);
-    Integer finalCount = getCount(count, historyIds).intValue();
-    Integer finalOffset = getOffset(offset, historyIds).intValue();
-    LOGGER.info("Fetching vk posts for count {} and offest {}, limit {}", finalCount, finalOffset, count);
+    LOGGER.info("Fetching vk posts for count {} and offest {}", count, offset);
     try {
       return client.wall().get(actor)
           .ownerId(-ownerId)
-          .count(finalCount)
-          .offset(finalOffset)
+          .count(count.intValue())
+          .offset(offset.intValue())
           .execute()
           .getItems()
           .stream()
-          .filter(x -> !historyIds.contains(x.getId().longValue()))
           .map(post -> new PostDTO(
                   post.getId().longValue(),
                   getAttachments(post),
@@ -85,22 +77,6 @@ public class VkGetPostsService implements GetPostsService {
       return photo.getPhoto604();
     } else {
       return null;
-    }
-  }
-
-  private Long getCount(Long requestedCount, List<Long> history) {
-    if (requestedCount + history.size() > 100) {
-      return 100L;
-    } else {
-      return requestedCount + history.size();
-    }
-  }
-
-  private Long getOffset(Long requestedOffset, List<Long> history) {
-    if (history.size() > 100) {
-      return history.size() - 100L;
-    } else {
-      return requestedOffset;
     }
   }
 }

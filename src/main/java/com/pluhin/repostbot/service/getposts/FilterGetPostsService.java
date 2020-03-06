@@ -28,7 +28,7 @@ public class FilterGetPostsService implements GetPostsService {
   public List<PostDTO> getPosts(SourceDomainId domainId, Long count, Long offset) {
     List<PostDTO> posts = delegate.getPosts(domainId, count, offset)
         .stream()
-        .filter(this::filter)
+        .filter(post -> filter(domainId, post))
         .collect(Collectors.toList());
 
     LOGGER.info("Fetched {} posts ", posts.size());
@@ -44,10 +44,10 @@ public class FilterGetPostsService implements GetPostsService {
     return posts;
   }
 
-  private Boolean filter(PostDTO post) {
+  private Boolean filter(SourceDomainId domainId, PostDTO post) {
     return conditions
         .stream()
-        .map(condition -> condition.test(post))
+        .map(condition -> condition.test(domainId, post))
         .reduce(true, (a, b) -> a && b);
   }
 }

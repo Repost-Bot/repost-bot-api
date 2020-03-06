@@ -21,12 +21,7 @@ public class DefaultPostsHistoryService implements PostsHistoryService {
 
   @Override
   public void savePost(SourceDomainId domainId, PostDTO postDTO, PostStatus status) {
-    PostsHistoryEntiity entiity = repository.findBySourceIdAndSourceDomainTypeAndSourceDomainId(
-        postDTO.getSourceId(),
-        domainId.getDomainType(),
-        domainId.getDomainId()
-    );
-
+    PostsHistoryEntiity entiity = getPost(domainId, postDTO.getSourceId());
     if (entiity == null) {
       entiity = createPostHistoryEntity(domainId, postDTO, status);
     }
@@ -37,12 +32,7 @@ public class DefaultPostsHistoryService implements PostsHistoryService {
 
   @Override
   public void changeStatus(SourceDomainId domainId, Long sourceId, PostStatus status) {
-    PostsHistoryEntiity entiity = repository.findBySourceIdAndSourceDomainTypeAndSourceDomainId(
-        sourceId,
-        domainId.getDomainType(),
-        domainId.getDomainId()
-    );
-
+    PostsHistoryEntiity entiity = getPost(domainId, sourceId);
     entiity.setStatus(status);
     repository.save(entiity);
   }
@@ -53,6 +43,15 @@ public class DefaultPostsHistoryService implements PostsHistoryService {
         .stream()
         .map(PostsHistoryEntiity::getSourceId)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public PostsHistoryEntiity getPost(SourceDomainId domainId, Long sourceId) {
+    return repository.findBySourceIdAndSourceDomainTypeAndSourceDomainId(
+        sourceId,
+        domainId.getDomainType(),
+        domainId.getDomainId()
+    );
   }
 
   private PostsHistoryEntiity createPostHistoryEntity(SourceDomainId domainId, PostDTO post, PostStatus status) {

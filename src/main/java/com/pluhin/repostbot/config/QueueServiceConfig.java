@@ -39,7 +39,8 @@ public class QueueServiceConfig {
         createQueueService(),
         systemSettingsService,
         postsServiceConfig.createPostService(),
-        queueRepository
+        queueRepository,
+        postsHistoryService
     );
   }
 

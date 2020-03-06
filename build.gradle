@@ -31,9 +31,4 @@ dependencies {
   compile "mysql:mysql-connector-java:${mysqlConnectorVersion}"
   compile "org.liquibase:liquibase-core:${liquibaseVersion}"
   compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-
-  testCompile platform("org.spockframework:spock-bom:${spockVersion}")
-  testCompile "org.spockframework:spock-core"
-  testRuntime "net.bytebuddy:byte-buddy:1.9.3"
-  testRuntime "org.objenesis:objenesis:2.6"
 }

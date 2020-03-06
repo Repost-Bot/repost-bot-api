@@ -25,14 +25,16 @@ public class DefaultQueueService implements QueueService {
   private final SystemSettingsService systemSettingsService;
   private final CreatePostService createPostService;
   private final QueueRepository queueRepository;
+  private final PostsHistoryService postsHistoryService;
 
   public DefaultQueueService(CreateQueueService createQueueService,
       SystemSettingsService systemSettingsService, CreatePostService createPostService,
-      QueueRepository queueRepository) {
+      QueueRepository queueRepository, PostsHistoryService postsHistoryService) {
     this.createQueueService = createQueueService;
     this.systemSettingsService = systemSettingsService;
     this.createPostService = createPostService;
     this.queueRepository = queueRepository;
+    this.postsHistoryService = postsHistoryService;
   }
 
   @Override
@@ -65,6 +67,9 @@ public class DefaultQueueService implements QueueService {
     QueueEntity entity = queueRepository.findById(id).get();
     entity.setStatus(status);
     queueRepository.save(entity);
+
+    SourceDomainId domainId = new SourceDomainId(entity.getDomainType(), entity.getDomainid());
+    postsHistoryService.changeStatus(domainId, entity.getSourceId(), status);
   }
 
   @Override

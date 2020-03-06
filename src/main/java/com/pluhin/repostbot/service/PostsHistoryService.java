@@ -1,5 +1,6 @@
 package com.pluhin.repostbot.service;
 
+import com.pluhin.repostbot.entity.PostsHistoryEntiity;
 import com.pluhin.repostbot.model.PostDTO;
 import com.pluhin.repostbot.model.PostStatus;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
@@ -12,4 +13,6 @@ public interface PostsHistoryService {
   void changeStatus(SourceDomainId domainId, Long sourceId, PostStatus status);
 
   List<Long> getSourceIdsFromHistory(SourceDomainId domainId);
+
+  PostsHistoryEntiity getPost(SourceDomainId domainId, Long sourceId);
 }
