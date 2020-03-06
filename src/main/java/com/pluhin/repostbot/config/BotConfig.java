@@ -1,7 +1,7 @@
 package com.pluhin.repostbot.config;
 
-import com.pluhin.repostbot.RepostBot;
-import com.pluhin.repostbot.RepostFitBot;
+import com.pluhin.repostbot.bot.RepostBot;
+import com.pluhin.repostbot.bot.TelegramRepostBot;
 import com.pluhin.repostbot.repository.AdminsRepository;
 import com.pluhin.repostbot.service.BotService;
 import com.pluhin.repostbot.service.DefaultBotService;
@@ -39,7 +39,7 @@ public class BotConfig {
     ApiContextInitializer.init();
 
     TelegramBotsApi botsApi = new TelegramBotsApi();
-    RepostFitBot bot = new RepostFitBot(
+    TelegramRepostBot bot = new TelegramRepostBot(
         messageHandlerConfig.getHandlers(),
         configurationProvider.getProperty("tg.bot.token", String.class),
         configurationProvider.getProperty("tg.bot.username", String.class),

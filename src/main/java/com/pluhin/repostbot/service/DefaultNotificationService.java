@@ -1,6 +1,6 @@
 package com.pluhin.repostbot.service;
 
-import com.pluhin.repostbot.RepostBot;
+import com.pluhin.repostbot.bot.RepostBot;
 import com.pluhin.repostbot.entity.AdminsEntity;
 import com.pluhin.repostbot.repository.AdminsRepository;
 import java.util.List;
@@ -28,7 +28,7 @@ public class DefaultNotificationService implements NotificationService {
         .map(AdminsEntity::getTelegramId)
         .collect(Collectors.toList());
 
-    repostBot.notifyAdmins(adminsId, getCreatedQueueMessage(queueId));
+    repostBot.sendMessage(adminsId, getCreatedQueueMessage(queueId));
   }
 
   private String getCreatedQueueMessage(String queueId) {

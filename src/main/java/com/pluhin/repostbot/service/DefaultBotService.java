@@ -1,6 +1,6 @@
 package com.pluhin.repostbot.service;
 
-import com.pluhin.repostbot.RepostBot;
+import com.pluhin.repostbot.bot.RepostBot;
 import com.pluhin.repostbot.entity.AdminsEntity;
 import com.pluhin.repostbot.repository.AdminsRepository;
 import java.io.File;
@@ -27,22 +27,33 @@ public class DefaultBotService implements BotService {
   }
 
   @Override
-  public void sendChannelPost(String image, String text) {
+  public void sendPost(String image, String text) {
     File file = getFileFromUrl(image);
     try {
-      repostBot.sendChannelPost(file, text);
+      LOGGER.info("Sending post with one image");
+      repostBot.sendPost(file, text);
     } finally {
       file.delete();
     }
   }
 
   @Override
-  public void postponePost(String image, String text) {
-    File file = getFileFromUrl(image);
-    repostBot.postponePost(file, text);
+  public void sendPost(List<String> images, String text) {
+    List<File> files = images
+        .stream()
+        .map(this::getFileFromUrl)
+        .collect(Collectors.toList());
+
+    try {
+      LOGGER.info("Sending post with {} images", images.size());
+      repostBot.sendPost(files, text);
+    } finally {
+      files.forEach(File::delete);
+    }
   }
 
   private File getFileFromUrl(String fileUrl) {
+    LOGGER.info("Getting file from url {}", fileUrl);
     String tempFileName = UUID.randomUUID().toString();
     try {
       URL url = new URL(fileUrl);
@@ -59,7 +70,7 @@ public class DefaultBotService implements BotService {
           .map(AdminsEntity::getTelegramId)
           .collect(Collectors.toList());
 
-      repostBot.notifyAdmins(admins, "Cannot get image by url. See logs for detailed error");
+      repostBot.sendMessage(admins, "Cannot get image by url. See logs for detailed error");
       throw new RuntimeException(ex);
     }
   }
