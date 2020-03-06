@@ -40,5 +40,5 @@ public class FilterGetPostsService implements GetPostsService {
     }
 
     return posts;
-
+  }
 }
