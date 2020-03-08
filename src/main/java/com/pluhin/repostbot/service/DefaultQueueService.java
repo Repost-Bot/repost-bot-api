@@ -126,6 +126,7 @@ public class DefaultQueueService implements QueueService {
         .filter(it -> it.getValue().isPresent())
         .map(Entry::getValue)
         .map(Optional::get)
+        .sorted(Comparator.comparing(QueueDTO::getDateCreated))
         .collect(Collectors.toList());
   }
 
