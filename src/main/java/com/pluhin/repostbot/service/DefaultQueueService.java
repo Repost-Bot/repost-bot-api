@@ -3,6 +3,8 @@ package com.pluhin.repostbot.service;
 import static com.pluhin.repostbot.model.PostStatus.APPROVED;
 import static com.pluhin.repostbot.model.PostStatus.DELIVERED;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.minBy;
 
 import com.pluhin.repostbot.entity.QueueEntity;
 import com.pluhin.repostbot.model.PostDTO;
@@ -15,7 +17,10 @@ import com.pluhin.repostbot.repository.QueueRepository;
 import com.pluhin.repostbot.service.createqueue.CreateQueueService;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -70,7 +75,7 @@ public class DefaultQueueService implements QueueService {
 
   @Override
   public void changeQueuePostStatus(Long id, PostStatus status) {
-    LOGGER.info("Changine queue item with id {}, status {}", id, status);
+    LOGGER.info("Changing queue item with id {}, status {}", id, status);
     QueueEntity entity = queueRepository.findById(id).get();
     entity.setStatus(status);
     queueRepository.save(entity);
@@ -108,7 +113,20 @@ public class DefaultQueueService implements QueueService {
 
   @Override
   public List<QueueDTO> getAllQueues() {
-    return queueRepository.getQueueIdAndDate();
+    return queueRepository.getQueueIdAndDate()
+        .stream()
+        .collect(
+            groupingBy(
+                QueueDTO::getQueueId,
+                minBy(Comparator.comparing(QueueDTO::getDateCreated))
+            )
+        )
+        .entrySet()
+        .stream()
+        .filter(it -> it.getValue().isPresent())
+        .map(Entry::getValue)
+        .map(Optional::get)
+        .collect(Collectors.toList());
   }
 
   private List<Integer> getHours() {
