@@ -18,8 +18,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultQueueService implements QueueService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultQueueService.class);
 
   private final CreateQueueService createQueueService;
   private final SystemSettingsService systemSettingsService;
@@ -40,6 +44,7 @@ public class DefaultQueueService implements QueueService {
   @Override
   public void createQueue() {
     String queueId = UUID.randomUUID().toString().replace("-", "");
+    LOGGER.info("Start creating queue with id {}", queueId);
     List<Integer> hours = getHours();
     createQueueService.createQueue(createDomainId(), queueId, hours);
   }
@@ -49,6 +54,7 @@ public class DefaultQueueService implements QueueService {
     queueRepository.getByStatusAndDateRetrieveLessThanEqual(APPROVED, LocalDateTime.now())
         .stream()
         .forEach(entity -> {
+          LOGGER.info("Start processing queue item with id {}", entity.getId());
           SourceDomainId domainId = new SourceDomainId(
               entity.getDomainType(), entity.getDomainid()
           );
@@ -64,6 +70,7 @@ public class DefaultQueueService implements QueueService {
 
   @Override
   public void changeQueuePostStatus(Long id, PostStatus status) {
+    LOGGER.info("Changine queue item with id {}, status {}", id, status);
     QueueEntity entity = queueRepository.findById(id).get();
     entity.setStatus(status);
     queueRepository.save(entity);
@@ -74,6 +81,7 @@ public class DefaultQueueService implements QueueService {
 
   @Override
   public void changeQueuePost(Long id) {
+    LOGGER.info("Replacing queue item with id {}", id);
     QueueEntity entity = queueRepository.findById(id).get();
     List<Integer> hour = Arrays.asList(entity.getDateRetrieve().getHour());
     createQueueService.createQueue(createDomainId(), entity.getQueueId(), hour).get(0);
