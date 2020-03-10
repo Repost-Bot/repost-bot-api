@@ -10,6 +10,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.photos.Photo;
 import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
+import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -34,22 +35,32 @@ public class VkGetPostsService implements GetPostsService {
   public List<PostDTO> getPosts(SourceDomainId domainId, Long count, Long offset) {
     Integer ownerId = Integer.parseInt(domainId.getDomainId());
     LOGGER.info("Fetching vk posts for count {} and offest {}", count, offset);
+    GetResponse response = execute(ownerId, count.intValue(), offset.intValue());
+
+    if (offset >= response.getCount()) {
+      throw new RuntimeException("Offset " + offset + " is bigger than total count " + response.getCount());
+    }
+
+    return response
+        .getItems()
+        .stream()
+        .map(post -> new PostDTO(
+                post.getId().longValue(),
+                getAttachments(post),
+                post.getText()
+            )
+        )
+        .limit(count)
+        .collect(Collectors.toList());
+  }
+
+  private GetResponse execute(Integer ownerId, Integer count, Integer offset) {
     try {
       return client.wall().get(actor)
           .ownerId(-ownerId)
           .count(count.intValue())
           .offset(offset.intValue())
-          .execute()
-          .getItems()
-          .stream()
-          .map(post -> new PostDTO(
-                  post.getId().longValue(),
-                  getAttachments(post),
-                  post.getText()
-              )
-          )
-          .limit(count)
-          .collect(Collectors.toList());
+          .execute();
     } catch (ApiException e) {
       LOGGER.error("Error fetching posts via api", e);
       throw new GetPostsException(e);

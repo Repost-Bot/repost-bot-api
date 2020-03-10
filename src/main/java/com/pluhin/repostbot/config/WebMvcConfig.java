@@ -21,8 +21,9 @@ public class WebMvcConfig {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         String host = configurationProvider.getProperty("host.name", String.class);
-        registry.addMapping("/queue/").allowedOrigins("*");
-        registry.addMapping("/**").allowedOrigins(host);
+        registry.addMapping("/**")
+            .allowedOrigins(host)
+            .allowedMethods("*");
       }
     };
   }

@@ -93,6 +93,13 @@ public class DefaultQueueService implements QueueService {
   }
 
   @Override
+  public void editPost(Long id, QueuePostDTO post) {
+    QueueEntity queueEntity = queueRepository.findById(id).get();
+    queueEntity.setText(post.getText());
+    queueRepository.save(queueEntity);
+  }
+
+  @Override
   public List<QueuePostDTO> getQueuePosts(String queueId) {
     return queueRepository.getAllByQueueId(queueId)
         .stream()

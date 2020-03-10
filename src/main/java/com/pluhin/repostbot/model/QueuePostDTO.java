@@ -1,5 +1,7 @@
 package com.pluhin.repostbot.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pluhin.repostbot.model.domainid.SourceDomainType;
 import java.time.LocalDateTime;
 
@@ -16,9 +18,18 @@ public class QueuePostDTO {
   private final Long sourceId;
   private final String queueId;
 
-  public QueuePostDTO(Long id, String imageUrl, String text, LocalDateTime dateAdded,
-      LocalDateTime dateRetrieve, PostStatus status, SourceDomainType domainType, String domainid,
-      Long sourceId, String queueId) {
+  @JsonCreator
+  public QueuePostDTO(
+      @JsonProperty("id") Long id,
+      @JsonProperty("imageUrl") String imageUrl,
+      @JsonProperty("text") String text,
+      @JsonProperty("dateAdded") LocalDateTime dateAdded,
+      @JsonProperty("dateRetrieve") LocalDateTime dateRetrieve,
+      @JsonProperty("status") PostStatus status,
+      @JsonProperty("domainType") SourceDomainType domainType,
+      @JsonProperty("domainid") String domainid,
+      @JsonProperty("sourceId") Long sourceId,
+      @JsonProperty("queueId") String queueId) {
     this.id = id;
     this.imageUrl = imageUrl;
     this.text = text;

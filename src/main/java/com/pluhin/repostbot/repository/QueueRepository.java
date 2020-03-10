@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface QueueRepository extends JpaRepository<QueueEntity, Long> {
 
@@ -21,4 +22,10 @@ public interface QueueRepository extends JpaRepository<QueueEntity, Long> {
   List<QueueEntity> getByStatusAndDateRetrieveLessThanEqual(PostStatus status, LocalDateTime date);
 
   Long countAllByStatus(PostStatus status);
+
+  @Query("FROM QueueEntity e where e.dateRetrieve >= :rangeFrom and e.dateRetrieve <= :rangeTo")
+  List<QueueEntity> getAllInRange(
+      @Param("rangeFrom") LocalDateTime rangeFrom,
+      @Param("rangeTo") LocalDateTime rangeTo
+  );
 }

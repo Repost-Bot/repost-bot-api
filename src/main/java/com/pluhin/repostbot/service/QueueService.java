@@ -15,6 +15,8 @@ public interface QueueService {
 
   void changeQueuePost(Long id);
 
+  void editPost(Long id, QueuePostDTO post);
+
   List<QueuePostDTO> getQueuePosts(String queueId);
 
   List<QueueDTO> getAllQueues();
