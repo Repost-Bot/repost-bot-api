@@ -1,10 +1,13 @@
 package com.pluhin.repostbot.controller;
 
+import static com.pluhin.repostbot.model.user.PrivilegeConstants.GET_POSTS;
+
 import com.pluhin.repostbot.model.PostDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
 import com.pluhin.repostbot.model.domainid.SourceDomainType;
 import com.pluhin.repostbot.service.getposts.GetPostsService;
 import java.util.List;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +24,7 @@ public class GetPostsController {
     this.getPostsService = getPostsService;
   }
 
+  @Secured(GET_POSTS)
   @GetMapping("/{domainType}/{domainId}")
   public List<PostDTO> getPosts(
       @PathVariable SourceDomainType domainType,

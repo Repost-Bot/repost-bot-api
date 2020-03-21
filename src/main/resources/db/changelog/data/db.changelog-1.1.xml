@@ -12,4 +12,63 @@
     </sql>
   </changeSet>
 
+  <changeSet id="1.1.1" author="pluhin">
+    <comment>add roles and privileges</comment>
+    <createTable tableName="roles">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints nullable="false" unique="true" primaryKey="true"/>
+      </column>
+      <column name="name" type="varchar(10)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="default_role" type="bit(1)"/>
+    </createTable>
+    <createTable tableName="privileges">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints nullable="false" unique="true" primaryKey="true"/>
+      </column>
+      <column name="name" type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="role_id" type="bigint">
+        <constraints nullable="false" referencedTableName="roles" referencedColumnNames="id"
+          foreignKeyName="privilege_role_id"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="1.1.2" author="pluhin">
+    <comment>add users table</comment>
+    <createTable tableName="users">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints nullable="false" unique="true" primaryKey="true"/>
+      </column>
+      <column name="username" type="varchar(100)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="password" type="varchar(100)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="role_id" type="varchar(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="full_name" type="varchar(100)"/>
+      <column name="locale" type="varchar(10)"/>
+    </createTable>
+    <createIndex tableName="users" indexName="username_idx">
+      <column name="username"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="1.1.3" author="pluhin">
+    <comment>add roles and privileges</comment>
+    <sql>
+      INSERT INTO roles (name) VALUES ('ROLE_ADMIN');
+      INSERT INTO roles (name, default_role) VALUES ('ROLE_USER', true);
+      SET @adminId = (SELECT id FROM roles WHERE name = 'ROLE_ADMIN');
+
+      INSERT INTO privileges (name, role_id)
+      VALUES ('CREATE_USERS', @adminId), ('CREATE_ROLES', @adminId);
+    </sql>
+  </changeSet>
 </databaseChangeLog>
