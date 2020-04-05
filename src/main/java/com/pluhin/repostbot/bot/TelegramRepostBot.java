@@ -32,8 +32,10 @@ public class TelegramRepostBot extends TelegramLongPollingBot implements RepostB
 
   @Override
   public void onUpdateReceived(Update update) {
-    SendMessage sendMessage = messageHandler.handle(update);
-    executeMethod(sendMessage);
+    List<SendMessage> sendMessage = messageHandler.handle(update);
+    sendMessage
+        .stream()
+        .forEach(this::executeMethod);
   }
 
   @Override
