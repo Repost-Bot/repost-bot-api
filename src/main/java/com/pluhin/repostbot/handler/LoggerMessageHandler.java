@@ -16,10 +16,11 @@ public class LoggerMessageHandler implements MessageHandler {
   public List<SendMessage> handle(Update update) {
     Message message = update.getMessage();
     String text = message.getText();
+    String username = message.getFrom().getUserName();
     Integer userId = message.getFrom().getId();
     String senderName = message.getFrom().getFirstName() + " " + message.getFrom().getLastName();
-    String log = String.join("\n", userId.toString(), senderName, text);
-    LOGGER.info("log");
+    String log = String.join("\n", userId.toString(), senderName, username, text);
+    LOGGER.info(log);
     return Collections.emptyList();
   }
 }
