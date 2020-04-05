@@ -4,6 +4,7 @@ import com.pluhin.repostbot.handler.ConditionalMessageHandler;
 import com.pluhin.repostbot.handler.ContactMessageHandler;
 import com.pluhin.repostbot.handler.DefaultMessageHandler;
 import com.pluhin.repostbot.handler.EchoMessageHandler;
+import com.pluhin.repostbot.handler.LoggerMessageHandler;
 import com.pluhin.repostbot.handler.MessageHandler;
 import com.pluhin.repostbot.handler.ReplyMessageHandler;
 import com.pluhin.repostbot.handler.condition.AndMessageHandlerCondition;
@@ -29,6 +30,7 @@ public class MessageHandlerConfig {
   public MessageHandler getHandlers() {
     return DefaultMessageHandler
         .builder()
+        .add(new LoggerMessageHandler())
         .add(contact())
         .add(contactAnswer())
         .build();
