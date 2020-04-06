@@ -12,4 +12,12 @@
     </sql>
   </changeSet>
 
+  <changeSet id="v1.1.1" author="pluhin">
+    <comment>add utf8 to system settings value</comment>
+    <sql>
+      ALTER TABLE system_settings MODIFY COLUMN settings_value TEXT
+      CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+    </sql>
+  </changeSet>
+
 </databaseChangeLog>

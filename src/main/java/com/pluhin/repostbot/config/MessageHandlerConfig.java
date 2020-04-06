@@ -1,19 +1,23 @@
 package com.pluhin.repostbot.config;
 
+import com.pluhin.repostbot.handler.CompositeMessageHandler;
 import com.pluhin.repostbot.handler.ConditionalMessageHandler;
+import com.pluhin.repostbot.handler.ConstantTextMessageHandler;
 import com.pluhin.repostbot.handler.ContactMessageHandler;
 import com.pluhin.repostbot.handler.DefaultMessageHandler;
-import com.pluhin.repostbot.handler.EchoMessageHandler;
 import com.pluhin.repostbot.handler.LoggerMessageHandler;
 import com.pluhin.repostbot.handler.MessageHandler;
 import com.pluhin.repostbot.handler.ReplyMessageHandler;
 import com.pluhin.repostbot.handler.condition.AndMessageHandlerCondition;
+import com.pluhin.repostbot.handler.condition.CachedMessageHandlerCondition;
 import com.pluhin.repostbot.handler.condition.HasIdInReplyMessageHandlerCondition;
+import com.pluhin.repostbot.handler.condition.HasSystemSettingMessageHandlerCondition;
 import com.pluhin.repostbot.handler.condition.IsAdminMessageHandlerCondition;
 import com.pluhin.repostbot.handler.condition.IsNotAdminMessageHandlerCondition;
 import com.pluhin.repostbot.handler.condition.MessageHandlerCondition;
 import com.pluhin.repostbot.handler.condition.ReplyMessageHandlerCondition;
 import com.pluhin.repostbot.repository.AdminsRepository;
+import com.pluhin.repostbot.service.SystemSettingsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,9 +25,12 @@ import org.springframework.context.annotation.Configuration;
 public class MessageHandlerConfig {
 
   private final AdminsRepository adminsRepository;
+  private final SystemSettingsService systemSettingsService;
 
-  public MessageHandlerConfig(AdminsRepository adminsRepository) {
+  public MessageHandlerConfig(AdminsRepository adminsRepository,
+      SystemSettingsService systemSettingsService) {
     this.adminsRepository = adminsRepository;
+    this.systemSettingsService = systemSettingsService;
   }
 
   @Bean
@@ -39,7 +46,11 @@ public class MessageHandlerConfig {
   private MessageHandler contact() {
     return new ConditionalMessageHandler(
         isNotAdmin(),
-        new ContactMessageHandler(adminsRepository)
+        CompositeMessageHandler
+            .builder()
+            .add(new ContactMessageHandler(adminsRepository))
+            .add(sendFastReply())
+            .build()
     );
   }
 
@@ -51,6 +62,21 @@ public class MessageHandlerConfig {
             hasIdInReplyMessage()
         ),
         new ReplyMessageHandler()
+    );
+  }
+
+  private MessageHandler sendFastReply() {
+    return new ConditionalMessageHandler(
+        new CachedMessageHandlerCondition(
+            new HasSystemSettingMessageHandlerCondition(
+                systemSettingsService,
+                "feedback.fast.reply"
+            )
+        ),
+        new ConstantTextMessageHandler(
+            systemSettingsService,
+            "feedback.fast.reply"
+        )
     );
   }
 
