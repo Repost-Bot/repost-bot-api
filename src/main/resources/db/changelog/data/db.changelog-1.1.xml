@@ -12,7 +12,15 @@
     </sql>
   </changeSet>
 
-  <changeSet id="1.1.1" author="pluhin">
+  <changeSet id="v1.1.1" author="pluhin">
+    <comment>add utf8 to system settings value</comment>
+    <sql>
+      ALTER TABLE system_settings MODIFY COLUMN settings_value TEXT
+      CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet id="1.1.2" author="pluhin">
     <comment>add roles and privileges</comment>
     <createTable tableName="roles">
       <column name="id" type="bigint" autoIncrement="true">
@@ -37,7 +45,7 @@
     </createTable>
   </changeSet>
 
-  <changeSet id="1.1.2" author="pluhin">
+  <changeSet id="1.1.3" author="pluhin">
     <comment>add users table</comment>
     <createTable tableName="users">
       <column name="id" type="bigint" autoIncrement="true">
@@ -60,7 +68,7 @@
     </createIndex>
   </changeSet>
 
-  <changeSet id="1.1.3" author="pluhin">
+  <changeSet id="1.1.4" author="pluhin">
     <comment>add roles and privileges</comment>
     <sql>
       INSERT INTO roles (name) VALUES ('ROLE_ADMIN');
