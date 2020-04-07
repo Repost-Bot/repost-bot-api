@@ -2,9 +2,6 @@ package com.pluhin.repostbot.config;
 
 import com.pluhin.repostbot.bot.RepostBot;
 import com.pluhin.repostbot.bot.TelegramRepostBot;
-import com.pluhin.repostbot.repository.AdminsRepository;
-import com.pluhin.repostbot.service.BotService;
-import com.pluhin.repostbot.service.DefaultBotService;
 import org.cfg4j.provider.ConfigurationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,21 +14,10 @@ public class BotConfig {
 
   private final ConfigurationProvider configurationProvider;
   private final MessageHandlerConfig messageHandlerConfig;
-  private final AdminsRepository adminsRepository;
 
-  public BotConfig(ConfigurationProvider configurationProvider,
-      MessageHandlerConfig messageHandlerConfig, AdminsRepository adminsRepository) {
+  public BotConfig(ConfigurationProvider configurationProvider, MessageHandlerConfig messageHandlerConfig) {
     this.configurationProvider = configurationProvider;
     this.messageHandlerConfig = messageHandlerConfig;
-    this.adminsRepository = adminsRepository;
-  }
-
-  @Bean
-  public BotService botService() {
-    return new DefaultBotService(
-        adminsRepository,
-        repostBot()
-    );
   }
 
   @Bean

@@ -1,8 +1,8 @@
 package com.pluhin.repostbot.config;
 
+import com.pluhin.repostbot.repository.AdminsRepository;
 import com.pluhin.repostbot.repository.QueueRepository;
 import com.pluhin.repostbot.service.DefaultQueueService;
-import com.pluhin.repostbot.service.NotificationService;
 import com.pluhin.repostbot.service.PostsHistoryService;
 import com.pluhin.repostbot.service.QueueService;
 import com.pluhin.repostbot.service.SystemSettingsService;
@@ -18,16 +18,19 @@ import org.springframework.context.annotation.Configuration;
 public class QueueServiceConfig {
 
   private final PostsServiceConfig postsServiceConfig;
-  private final NotificationService notificationService;
+  private final NotificationConfig notificationConfig;
+  private final AdminsRepository adminsRepository;
   private final SystemSettingsService systemSettingsService;
   private final QueueRepository queueRepository;
   private final PostsHistoryService postsHistoryService;
 
   public QueueServiceConfig(PostsServiceConfig postsServiceConfig,
-      NotificationService notificationService, SystemSettingsService systemSettingsService,
+      NotificationConfig notificationConfig, AdminsRepository adminsRepository,
+      SystemSettingsService systemSettingsService,
       QueueRepository queueRepository, PostsHistoryService postsHistoryService) {
     this.postsServiceConfig = postsServiceConfig;
-    this.notificationService = notificationService;
+    this.notificationConfig = notificationConfig;
+    this.adminsRepository = adminsRepository;
     this.systemSettingsService = systemSettingsService;
     this.queueRepository = queueRepository;
     this.postsHistoryService = postsHistoryService;
@@ -56,7 +59,8 @@ public class QueueServiceConfig {
             ),
             queueRepository
         ),
-        notificationService
+        adminsRepository,
+        notificationConfig.notificationService()
     );
   }
 }

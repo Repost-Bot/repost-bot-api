@@ -5,9 +5,7 @@ import java.util.List;
 
 public interface RepostBot {
 
-  void sendPost(File image, String text);
-
   void sendPost(List<File> images, String text);
 
-  void sendMessage(List<Long> ids, String text);
+  void sendPost(String text, List<File> attachments, String username);
 }
