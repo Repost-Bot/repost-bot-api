@@ -3,7 +3,9 @@ package com.pluhin.repostbot.config;
 import com.pluhin.repostbot.config.settings.EmailSettings;
 import com.pluhin.repostbot.notification.sender.TelegramNotificationSender;
 import com.pluhin.repostbot.notification.template.DefaultEmailTemplateRepository;
-import com.pluhin.repostbot.notification.template.TelegramTemplateRepository;
+import com.pluhin.repostbot.notification.template.DefaultTelegramTemplateRepository;
+import com.pluhin.repostbot.repository.EmailTemplateRepository;
+import com.pluhin.repostbot.repository.TelegramTemplateRepository;
 import com.pluhin.util.notification.DefaultNotificationService;
 import com.pluhin.util.notification.DictionaryNotificationService;
 import com.pluhin.util.notification.NotificationService;
@@ -26,9 +28,17 @@ import org.springframework.context.annotation.Configuration;
 public class NotificationConfig {
 
   private final ConfigurationProvider configurationProvider;
+  private final BotConfig botConfig;
+  private final EmailTemplateRepository emailTemplateRepository;
+  private final TelegramTemplateRepository telegramTemplateRepository;
 
-  public NotificationConfig(ConfigurationProvider configurationProvider) {
+  public NotificationConfig(ConfigurationProvider configurationProvider,
+      BotConfig botConfig, EmailTemplateRepository emailTemplateRepository,
+      TelegramTemplateRepository telegramTemplateRepository) {
     this.configurationProvider = configurationProvider;
+    this.botConfig = botConfig;
+    this.emailTemplateRepository = emailTemplateRepository;
+    this.telegramTemplateRepository = telegramTemplateRepository;
   }
 
   @Bean
@@ -43,7 +53,7 @@ public class NotificationConfig {
   private NotificationService emailNotificationService() {
     EmailSettings emailSettings = configurationProvider.bind("email", EmailSettings.class);
 
-    TemplateRepository templateRepository = new DefaultEmailTemplateRepository();
+    TemplateRepository templateRepository = new DefaultEmailTemplateRepository(emailTemplateRepository);
     TemplateProcessor processor = new DefaultEmailTemplateProcessor(new DefaultTemplateBuilder());
     NotificationSender sender = new EmailNotificationSender(
         emailSettings.hasSsl(),
@@ -61,9 +71,9 @@ public class NotificationConfig {
   }
 
   private NotificationService telegramNotificationService() {
-    TemplateRepository templateRepository = new TelegramTemplateRepository();
+    TemplateRepository templateRepository = new DefaultTelegramTemplateRepository(telegramTemplateRepository);
     TemplateProcessor processor = new DefaultTemplateProcessor(new DefaultTemplateBuilder());
-    NotificationSender sender = new TelegramNotificationSender(repostBot);
+    NotificationSender sender = new TelegramNotificationSender(botConfig.repostBot());
     return new DefaultNotificationService(
         templateRepository,
         processor,
