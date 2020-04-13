@@ -6,11 +6,10 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
@@ -34,8 +33,13 @@ public class TelegramRepostBot extends TelegramLongPollingBot implements RepostB
   public void onUpdateReceived(Update update) {
     List<SendMessage> sendMessage = messageHandler.handle(update);
     sendMessage
-        .stream()
-        .forEach(this::executeMethod);
+        .forEach(x -> {
+          try {
+            execute(x);
+          } catch (TelegramApiException e) {
+            throw new CannotSendMessageException("Cannot execute tg bot api method", e);
+          }
+        });
   }
 
   @Override
@@ -49,43 +53,30 @@ public class TelegramRepostBot extends TelegramLongPollingBot implements RepostB
   }
 
   @Override
-  public void sendPost(File image, String text) {
-    SendPhoto sendPhoto = new SendPhoto();
-    sendPhoto.setPhoto(image);
-    sendPhoto.setCaption(text);
-    sendPhoto.setChatId(channelName);
-
-    executeMethod(sendPhoto);
-  }
-
-  @Override
   public void sendPost(List<File> images, String text) {
-    SendMediaGroup sendMediaGroup = new SendMediaGroup();
-    sendMediaGroup.setChatId(channelName);
-    sendMediaGroup.setMedia(convertFilesToInputMedia(images));
-
-    SendMessage sendMessage = new SendMessage(channelName, text);
-    executeMethod(sendMediaGroup);
-    executeMethod(sendMessage);
+    sendPost(text, images, channelName);
   }
 
   @Override
-  public void sendMessage(List<Long> ids, String text) {
-    ids
-        .stream()
-        .map(id -> createSendMessage(id, text))
-        .forEach(this::executeMethod);
-  }
-
-  private void executeMethod(SendPhoto sendPhoto) {
-    try {
-      execute(sendPhoto);
-    } catch (TelegramApiException e) {
-      throw new CannotSendMessageException("Cannot execute tg bot api method", e);
+  public void sendPost(String text, List<File> attachments, String username) {
+    if (attachments == null) {
+      sendMessage(text, username);
+    }
+    switch (attachments.size()) {
+      case 0:
+        sendMessage(text, username);
+        break;
+      case 1:
+        sendPhoto(text, attachments.get(0), username);
+        break;
+      default:
+        sendMediaGroup(text, attachments, username);
+        break;
     }
   }
 
-  private void executeMethod(SendMessage sendMessage) {
+  private void sendMessage(String text, String username) {
+    SendMessage sendMessage = new SendMessage(username, text);
     try {
       execute(sendMessage);
     } catch (TelegramApiException e) {
@@ -93,19 +84,37 @@ public class TelegramRepostBot extends TelegramLongPollingBot implements RepostB
     }
   }
 
-  private void executeMethod(SendMediaGroup sendMediaGroup) {
+  private void sendPhoto(String text, File attachment, String username) {
+    SendPhoto sendPhoto = new SendPhoto();
+    sendPhoto.setChatId(username);
+    sendPhoto.setPhoto(attachment);
+    sendPhoto.setCaption(text);
+
     try {
-      execute(sendMediaGroup);
+      execute(sendPhoto);
     } catch (TelegramApiException e) {
       throw new CannotSendMessageException("Cannot execute tg bot api method", e);
     }
   }
 
-  private SendMessage createSendMessage(Long id, String text) {
-    SendMessage sendMessage = new SendMessage();
-    sendMessage.setChatId(id);
-    sendMessage.setText(text);
-    return sendMessage;
+  private void sendMediaGroup(String text, List<File> attachments, String username) {
+    SendMediaGroup sendMediaGroup = new SendMediaGroup();
+    sendMediaGroup.setChatId(username);
+    sendMediaGroup.setMedia(convertFilesToInputMedia(attachments));
+    Message mediaGroupMessage = null;
+    try {
+      mediaGroupMessage = execute(sendMediaGroup).get(0);
+    } catch (TelegramApiException e) {
+      throw new CannotSendMessageException("Cannot execute tg bot api method", e);
+    }
+
+    SendMessage sendMessage = new SendMessage(username, text);
+    sendMessage.setReplyToMessageId(mediaGroupMessage.getMessageId());
+    try {
+      execute(sendMessage);
+    } catch (TelegramApiException e) {
+      throw new CannotSendMessageException("Cannot execute tg bot api method", e);
+    }
   }
 
   private List<InputMedia> convertFilesToInputMedia(List<File> files) {

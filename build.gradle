@@ -21,6 +21,8 @@ repositories {
 }
 
 dependencies {
+  compile "com.pluhin.util:notification-framework:${notificationVersion}"
+
   compile "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
   compile "org.springframework.boot:spring-boot-starter-web"
   compile "org.springframework.boot:spring-boot-starter-data-jpa"

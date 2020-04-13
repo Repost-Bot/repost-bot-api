@@ -20,4 +20,41 @@
     </sql>
   </changeSet>
 
+  <changeSet id="v1.1.2" author="pluhin">
+    <comment>add notification template tables</comment>
+    <createTable tableName="email_template">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="name" type="varchar(100)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="subject" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="text" type="TEXT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="telegram_template">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="name" type="varchar(100)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="text" type="TEXT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex tableName="email_template" indexName="email_name_idx">
+      <column name="name"/>
+    </createIndex>
+    <createIndex tableName="telegram_template" indexName="telegram_name_idx">
+      <column name="name"/>
+    </createIndex>
+  </changeSet>
+
 </databaseChangeLog>
