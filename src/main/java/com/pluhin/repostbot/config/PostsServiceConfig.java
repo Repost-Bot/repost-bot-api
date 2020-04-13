@@ -41,7 +41,7 @@ public class PostsServiceConfig {
 
   @Bean
   public CreatePostService createPostService() {
-    return new DefaultCreatePostService(botConfig.botService(), postsHistoryService);
+    return new DefaultCreatePostService(botConfig.repostBot(), postsHistoryService);
   }
 
   private GetPostsService vkService() {
