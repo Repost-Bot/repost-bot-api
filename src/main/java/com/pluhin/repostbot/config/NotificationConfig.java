@@ -8,6 +8,7 @@ import com.pluhin.repostbot.repository.BotEmailTemplateRepository;
 import com.pluhin.repostbot.repository.BotTelegramTemplateRepository;
 import com.pluhin.util.notification.DefaultNotificationService;
 import com.pluhin.util.notification.DictionaryNotificationService;
+import com.pluhin.util.notification.LoggingNotificationService;
 import com.pluhin.util.notification.NotificationService;
 import com.pluhin.util.notification.builder.DefaultTemplateBuilder;
 import com.pluhin.util.notification.model.DefaultRecipientType;
@@ -64,10 +65,12 @@ public class NotificationConfig {
         settings.from()
     );
 
-    return new DefaultNotificationService(
-        repository,
-        processor,
-        sender
+    return new LoggingNotificationService(
+        new DefaultNotificationService(
+            repository,
+            processor,
+            sender
+        )
     );
   }
 
@@ -76,10 +79,12 @@ public class NotificationConfig {
     TemplateProcessor processor = new DefaultTemplateProcessor(new DefaultTemplateBuilder());
     NotificationSender sender = new TelegramNotificationSender(botConfig.repostBot());
 
-    return new DefaultNotificationService(
-        repository,
-        processor,
-        sender
+    return new LoggingNotificationService(
+        new DefaultNotificationService(
+            repository,
+            processor,
+            sender
+        )
     );
   }
 }

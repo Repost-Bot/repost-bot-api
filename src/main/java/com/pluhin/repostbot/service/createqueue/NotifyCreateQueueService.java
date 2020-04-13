@@ -13,6 +13,7 @@ import com.pluhin.util.notification.model.NotificationRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class NotifyCreateQueueService implements CreateQueueService {
@@ -40,7 +41,8 @@ public class NotifyCreateQueueService implements CreateQueueService {
     Map<String, String> paramsMap = createParamsMap(queueId);
     List<NotificationRequest> requests = adminsRepository.findAll()
         .stream()
-        .map(AdminsEntity::getUsername)
+        .map(AdminsEntity::getTelegramId)
+        .map(Objects::toString)
         .map(username -> new DefaultRecipient(DefaultRecipientType.TELEGRAM, username))
         .map(recipient -> new DefaultNotificationRequest(
             recipient,

@@ -34,7 +34,8 @@ public class ConfigurationProviderConfig {
                 ),
                 new ClasspathConfigurationSource(
                     () -> Paths.get("application.properties")
-                )
+                ),
+                new EnvironmentVariablesConfigurationSource()
             )
         )
         .build();

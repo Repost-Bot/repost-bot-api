@@ -35,6 +35,9 @@
       <column name="text" type="TEXT">
         <constraints nullable="false"/>
       </column>
+      <column name="created_at" type="DATETIME" defaultValue="NOW()">
+        <constraints nullable="false"/>
+      </column>
     </createTable>
 
     <createTable tableName="telegram_template">
@@ -45,6 +48,9 @@
         <constraints nullable="false" unique="true"/>
       </column>
       <column name="text" type="TEXT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_at" type="DATETIME" defaultValue="NOW()">
         <constraints nullable="false"/>
       </column>
     </createTable>
