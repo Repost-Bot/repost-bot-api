@@ -10,6 +10,7 @@ import com.pluhin.util.notification.DefaultNotificationService;
 import com.pluhin.util.notification.DictionaryNotificationService;
 import com.pluhin.util.notification.LoggingNotificationService;
 import com.pluhin.util.notification.NotificationService;
+import com.pluhin.util.notification.ThreadedNotificationService;
 import com.pluhin.util.notification.builder.DefaultTemplateBuilder;
 import com.pluhin.util.notification.model.DefaultRecipientType;
 import com.pluhin.util.notification.model.RecipientType;
@@ -48,7 +49,11 @@ public class NotificationConfig {
     dictionary.put(DefaultRecipientType.EMAIL, emailNotificationService());
     dictionary.put(DefaultRecipientType.TELEGRAM, telegramNotificationService());
 
-    return new DictionaryNotificationService(dictionary);
+    return new ThreadedNotificationService(
+        new LoggingNotificationService(
+            new DictionaryNotificationService(dictionary)
+        )
+    );
   }
 
   private NotificationService emailNotificationService() {
@@ -65,12 +70,10 @@ public class NotificationConfig {
         settings.from()
     );
 
-    return new LoggingNotificationService(
-        new DefaultNotificationService(
-            repository,
-            processor,
-            sender
-        )
+    return new DefaultNotificationService(
+        repository,
+        processor,
+        sender
     );
   }
 
@@ -79,12 +82,10 @@ public class NotificationConfig {
     TemplateProcessor processor = new DefaultTemplateProcessor(new DefaultTemplateBuilder());
     NotificationSender sender = new TelegramNotificationSender(botConfig.repostBot());
 
-    return new LoggingNotificationService(
-        new DefaultNotificationService(
-            repository,
-            processor,
-            sender
-        )
+    return new DefaultNotificationService(
+        repository,
+        processor,
+        sender
     );
   }
 }
