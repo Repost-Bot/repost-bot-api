@@ -1,9 +1,11 @@
 package com.pluhin.repostbot.service.createqueue;
 
-import com.pluhin.repostbot.entity.AdminsEntity;
+import static com.pluhin.repostbot.model.user.RoleDTO.ADMIN;
+
+import com.pluhin.repostbot.entity.UserEntity;
 import com.pluhin.repostbot.model.PostDTO;
 import com.pluhin.repostbot.model.domainid.SourceDomainId;
-import com.pluhin.repostbot.repository.AdminsRepository;
+import com.pluhin.repostbot.repository.UserRepository;
 import com.pluhin.repostbot.service.SystemSettingsService;
 import com.pluhin.util.notification.NotificationService;
 import com.pluhin.util.notification.model.DefaultNotificationRequest;
@@ -22,15 +24,15 @@ public class NotifyCreateQueueService implements CreateQueueService {
 
   private final CreateQueueService delegate;
   private final NotificationService notificationService;
-  private final AdminsRepository adminsRepository;
+  private final UserRepository userRepository;
   private final SystemSettingsService systemSettingsService;
 
   public NotifyCreateQueueService(CreateQueueService delegate,
-      NotificationService notificationService, AdminsRepository adminsRepository,
+      NotificationService notificationService, UserRepository userRepository,
       SystemSettingsService systemSettingsService) {
     this.delegate = delegate;
     this.notificationService = notificationService;
-    this.adminsRepository = adminsRepository;
+    this.userRepository = userRepository;
     this.systemSettingsService = systemSettingsService;
   }
 
@@ -39,9 +41,9 @@ public class NotifyCreateQueueService implements CreateQueueService {
     List<PostDTO> posts = delegate.createQueue(domainId, queueId, hours);
 
     Map<String, String> paramsMap = createParamsMap(queueId);
-    List<NotificationRequest> requests = adminsRepository.findAll()
+    List<NotificationRequest> requests = userRepository.findAllByRole(ADMIN.name())
         .stream()
-        .map(AdminsEntity::getTelegramId)
+        .map(UserEntity::getTelegramId)
         .map(Objects::toString)
         .map(username -> new DefaultRecipient(DefaultRecipientType.TELEGRAM, username))
         .map(recipient -> new DefaultNotificationRequest(

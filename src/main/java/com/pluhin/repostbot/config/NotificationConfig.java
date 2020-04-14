@@ -6,11 +6,11 @@ import com.pluhin.repostbot.notification.repository.DefaultTelegramTemplateRepos
 import com.pluhin.repostbot.notification.sender.TelegramNotificationSender;
 import com.pluhin.repostbot.repository.BotEmailTemplateRepository;
 import com.pluhin.repostbot.repository.BotTelegramTemplateRepository;
+import com.pluhin.util.notification.AsyncNotificationService;
 import com.pluhin.util.notification.DefaultNotificationService;
 import com.pluhin.util.notification.DictionaryNotificationService;
 import com.pluhin.util.notification.LoggingNotificationService;
 import com.pluhin.util.notification.NotificationService;
-import com.pluhin.util.notification.ThreadedNotificationService;
 import com.pluhin.util.notification.builder.DefaultTemplateBuilder;
 import com.pluhin.util.notification.model.DefaultRecipientType;
 import com.pluhin.util.notification.model.RecipientType;
@@ -49,7 +49,7 @@ public class NotificationConfig {
     dictionary.put(DefaultRecipientType.EMAIL, emailNotificationService());
     dictionary.put(DefaultRecipientType.TELEGRAM, telegramNotificationService());
 
-    return new ThreadedNotificationService(
+    return new AsyncNotificationService(
         new LoggingNotificationService(
             new DictionaryNotificationService(dictionary)
         )

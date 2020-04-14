@@ -1,7 +1,7 @@
 package com.pluhin.repostbot.config;
 
-import com.pluhin.repostbot.repository.AdminsRepository;
 import com.pluhin.repostbot.repository.QueueRepository;
+import com.pluhin.repostbot.repository.UserRepository;
 import com.pluhin.repostbot.service.DefaultQueueService;
 import com.pluhin.repostbot.service.PostsHistoryService;
 import com.pluhin.repostbot.service.QueueService;
@@ -22,18 +22,17 @@ public class QueueServiceConfig {
   private final SystemSettingsService systemSettingsService;
   private final QueueRepository queueRepository;
   private final PostsHistoryService postsHistoryService;
-  private final AdminsRepository adminsRepository;
+  private final UserRepository userRepository;
 
   public QueueServiceConfig(PostsServiceConfig postsServiceConfig,
       NotificationConfig notificationConfig, SystemSettingsService systemSettingsService,
-      QueueRepository queueRepository, PostsHistoryService postsHistoryService,
-      AdminsRepository adminsRepository) {
+      QueueRepository queueRepository, PostsHistoryService postsHistoryService, UserRepository userRepository) {
     this.postsServiceConfig = postsServiceConfig;
     this.notificationConfig = notificationConfig;
     this.systemSettingsService = systemSettingsService;
     this.queueRepository = queueRepository;
     this.postsHistoryService = postsHistoryService;
-    this.adminsRepository = adminsRepository;
+    this.userRepository = userRepository;
   }
 
   @Bean
@@ -60,7 +59,7 @@ public class QueueServiceConfig {
             queueRepository
         ),
         notificationConfig.notificationService(),
-        adminsRepository,
+        userRepository,
         systemSettingsService
     );
   }

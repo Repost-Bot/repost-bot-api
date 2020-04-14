@@ -18,10 +18,12 @@ jar {
 
 repositories {
   mavenCentral()
+  mavenLocal()
 }
 
 dependencies {
   compile "com.pluhin.util:notification-framework:${notificationVersion}"
+  compile "com.pluhin.util:registration-framework:${registrationVersion}"
 
   compile "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
   compile "org.springframework.boot:spring-boot-starter-web"

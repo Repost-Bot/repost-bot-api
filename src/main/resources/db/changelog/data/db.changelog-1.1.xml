@@ -63,4 +63,31 @@
     </createIndex>
   </changeSet>
 
+  <changeSet id="v1.1.3" author="pluhin">
+    <comment>add users table</comment>
+    <createTable tableName="user">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="username" type="varchar(100)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="password" type="varchar(100)"/>
+      <column name="full_name" type="varchar(100)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="token" type="varchar(100)"/>
+      <column name="telegram_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="role" type="varchar(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="registered_at" type="DATETIME" defaultValue="NOW()">
+        <constraints nullable="false"/>
+      </column>
+      <column name="confirmed_at" type="DATETIME"/>
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>

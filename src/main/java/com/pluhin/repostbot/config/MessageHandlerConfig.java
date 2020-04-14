@@ -16,7 +16,7 @@ import com.pluhin.repostbot.handler.condition.IsAdminMessageHandlerCondition;
 import com.pluhin.repostbot.handler.condition.IsNotAdminMessageHandlerCondition;
 import com.pluhin.repostbot.handler.condition.MessageHandlerCondition;
 import com.pluhin.repostbot.handler.condition.ReplyMessageHandlerCondition;
-import com.pluhin.repostbot.repository.AdminsRepository;
+import com.pluhin.repostbot.repository.UserRepository;
 import com.pluhin.repostbot.service.SystemSettingsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,13 +24,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MessageHandlerConfig {
 
-  private final AdminsRepository adminsRepository;
   private final SystemSettingsService systemSettingsService;
+  private final UserRepository userRepository;
 
-  public MessageHandlerConfig(AdminsRepository adminsRepository,
-      SystemSettingsService systemSettingsService) {
-    this.adminsRepository = adminsRepository;
+  public MessageHandlerConfig(SystemSettingsService systemSettingsService,
+      UserRepository userRepository) {
     this.systemSettingsService = systemSettingsService;
+    this.userRepository = userRepository;
   }
 
   @Bean
@@ -48,7 +48,7 @@ public class MessageHandlerConfig {
         isNotAdmin(),
         CompositeMessageHandler
             .builder()
-            .add(new ContactMessageHandler(adminsRepository))
+            .add(new ContactMessageHandler(userRepository))
             .add(sendFastReply())
             .build()
     );
@@ -81,11 +81,11 @@ public class MessageHandlerConfig {
   }
 
   private MessageHandlerCondition isAdmin() {
-    return new IsAdminMessageHandlerCondition(adminsRepository);
+    return new IsAdminMessageHandlerCondition(userRepository);
   }
 
   private MessageHandlerCondition isNotAdmin() {
-    return new IsNotAdminMessageHandlerCondition(adminsRepository);
+    return new IsNotAdminMessageHandlerCondition(userRepository);
   }
 
   private MessageHandlerCondition hasReplyMessage() {
