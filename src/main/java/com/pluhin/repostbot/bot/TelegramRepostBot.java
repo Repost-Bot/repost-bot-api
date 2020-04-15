@@ -61,6 +61,7 @@ public class TelegramRepostBot extends TelegramLongPollingBot implements RepostB
   public void sendPost(String text, List<File> attachments, String username) {
     if (attachments == null) {
       sendMessage(text, username);
+      return;
     }
     switch (attachments.size()) {
       case 0:

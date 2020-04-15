@@ -90,4 +90,25 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="v1.1.4" author="pluhin">
+    <comment>add notifications table</comment>
+    <createTable tableName="notifications">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="address" type="varchar(100)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="type" type="varchar(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="template_name" type="varchar(100)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_sent" type="DATETIME">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>
