@@ -2,6 +2,7 @@ package com.pluhin.repostbot.config;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pluhin.repostbot.model.user.BotRegistrationRequest;
@@ -26,6 +27,7 @@ public class ObjectMapperConfig {
     ObjectMapper mapper = new ObjectMapper();
     mapper.registerModule(typeMappingModule);
     mapper.registerModule(new JavaTimeModule());
+    mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     return mapper;
   }
 }

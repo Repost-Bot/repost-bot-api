@@ -40,8 +40,8 @@ public class UsersController {
 
   @GetMapping
   public List<UserDTO> getUsersPage(
-      @RequestParam(required = false) int page,
-      @RequestParam(required = false) int size,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "10") int size,
       @RequestParam(required = false) String sortField,
       @RequestParam(required = false) Direction sortDirection
   ) {
