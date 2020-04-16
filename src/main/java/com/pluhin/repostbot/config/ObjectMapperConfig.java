@@ -3,6 +3,7 @@ package com.pluhin.repostbot.config;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pluhin.repostbot.model.user.BotRegistrationRequest;
 import com.pluhin.repostbot.model.user.RoleDTO;
 import com.pluhin.util.registration.model.ConfirmationEntity;
@@ -17,13 +18,14 @@ public class ObjectMapperConfig {
 
   @Bean
   public ObjectMapper objectMapper() {
-    SimpleModule module = new SimpleModule("Mapping module", Version.unknownVersion());
-    module.addAbstractTypeMapping(RegistrationRequest.class, BotRegistrationRequest.class);
-    module.addAbstractTypeMapping(Role.class, RoleDTO.class);
-    module.addAbstractTypeMapping(ConfirmationEntity.class, DefaultConfirmationEntity.class);
+    SimpleModule typeMappingModule = new SimpleModule("Mapping module", Version.unknownVersion());
+    typeMappingModule.addAbstractTypeMapping(RegistrationRequest.class, BotRegistrationRequest.class);
+    typeMappingModule.addAbstractTypeMapping(Role.class, RoleDTO.class);
+    typeMappingModule.addAbstractTypeMapping(ConfirmationEntity.class, DefaultConfirmationEntity.class);
 
     ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(module);
+    mapper.registerModule(typeMappingModule);
+    mapper.registerModule(new JavaTimeModule());
     return mapper;
   }
 }
