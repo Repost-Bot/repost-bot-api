@@ -31,7 +31,7 @@ public class DefaultUsersService implements UsersService {
 
   @Override
   public List<UserDTO> findUsers(int page, int size, String sortField, Direction sortDirection) {
-    Pageable pageable = createPageRequest(page, size, sortField, sortDirection);
+    Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
 
     return userRepository.findAll(pageable)
         .stream()
@@ -49,20 +49,5 @@ public class DefaultUsersService implements UsersService {
         entity.getConfirmedAt(),
         entity.getDeletedAt()
     );
-  }
-
-  private Pageable createPageRequest(int page, int size, String sortField, Direction sortDirection) {
-    Pageable pageable = null;
-    if (size == 0) {
-      size = 10;
-    }
-
-    if (sortDirection == null || sortField == null) {
-      pageable = PageRequest.of(page, size);
-    } else {
-      pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
-    }
-
-    return pageable;
   }
 }

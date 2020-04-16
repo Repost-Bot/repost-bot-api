@@ -42,8 +42,8 @@ public class UsersController {
   public List<UserDTO> getUsersPage(
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "10") int size,
-      @RequestParam(required = false) String sortField,
-      @RequestParam(required = false) Direction sortDirection
+      @RequestParam(required = false, defaultValue = "id") String sortField,
+      @RequestParam(required = false, defaultValue = "ASC") Direction sortDirection
   ) {
     return usersService.findUsers(page, size, sortField, sortDirection);
   }
