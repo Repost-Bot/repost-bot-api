@@ -3,6 +3,7 @@ package com.pluhin.repostbot.service;
 import com.pluhin.repostbot.entity.UserEntity;
 import com.pluhin.repostbot.model.user.UserDTO;
 import com.pluhin.repostbot.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +23,10 @@ public class DefaultUsersService implements UsersService {
 
   @Override
   public void remove(String username) {
-    userRepository.removeByUsername(username);
+    UserEntity userEntity = userRepository.findFirstByUsername(username);
+    userEntity.setDeleted(true);
+    userEntity.setDeletedAt(LocalDateTime.now());
+    userRepository.save(userEntity);
   }
 
   @Override
@@ -40,8 +44,10 @@ public class DefaultUsersService implements UsersService {
         entity.getId(),
         entity.getUsername(),
         entity.getFullName(),
+        entity.getDeleted(),
         entity.getRegisteredAt(),
-        entity.getConfirmedAt()
+        entity.getConfirmedAt(),
+        entity.getDeletedAt()
     );
   }
 

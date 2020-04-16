@@ -111,4 +111,14 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="v1.1.5" author="pluhin">
+    <comment>add soft delete users</comment>
+    <addColumn tableName="user">
+      <column name="deleted" type="bit(1)" defaultValue="0"/>
+    </addColumn>
+    <addColumn tableName="user">
+      <column name="deleted_at" type="DATETIME"/>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

@@ -27,9 +27,13 @@ public class UserEntity {
 
   private Long telegramId;
 
+  private Boolean deleted;
+
   private LocalDateTime registeredAt;
 
   private LocalDateTime confirmedAt;
+
+  private LocalDateTime deletedAt;
 
   public Long getId() {
     return id;
@@ -87,6 +91,14 @@ public class UserEntity {
     this.telegramId = telegramId;
   }
 
+  public Boolean getDeleted() {
+    return deleted;
+  }
+
+  public void setDeleted(Boolean deleted) {
+    this.deleted = deleted;
+  }
+
   public LocalDateTime getRegisteredAt() {
     return registeredAt;
   }
@@ -101,5 +113,13 @@ public class UserEntity {
 
   public void setConfirmedAt(LocalDateTime confirmedAt) {
     this.confirmedAt = confirmedAt;
+  }
+
+  public LocalDateTime getDeletedAt() {
+    return deletedAt;
+  }
+
+  public void setDeletedAt(LocalDateTime deletedAt) {
+    this.deletedAt = deletedAt;
   }
 }
