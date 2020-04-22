@@ -10,6 +10,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,6 +39,13 @@ public class DefaultUsersService implements UsersService {
         .stream()
         .map(this::toDTO)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public UserDTO getCurrentUser() {
+    UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    UserEntity entity = userRepository.findFirstByUsername(userDetails.getUsername());
+    return toDTO(entity);
   }
 
   private UserDTO toDTO(UserEntity entity) {

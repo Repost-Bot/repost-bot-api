@@ -9,4 +9,6 @@ public interface UsersService {
   void remove(String username);
 
   List<UserDTO> findUsers(int page, int size, String sortField, Direction sortDirection);
+
+  UserDTO getCurrentUser();
 }

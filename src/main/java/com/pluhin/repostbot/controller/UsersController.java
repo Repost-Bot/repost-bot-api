@@ -75,4 +75,9 @@ public class UsersController {
       return ResponseEntity.notFound().build();
     }
   }
+
+  @GetMapping("/current")
+  public UserDTO currentUser() {
+    return usersService.getCurrentUser();
+  }
 }
