@@ -1,5 +1,6 @@
 package com.pluhin.repostbot.config;
 
+import com.google.common.collect.ImmutableMap;
 import com.pluhin.repostbot.config.settings.EmailSettings;
 import com.pluhin.repostbot.notification.repository.DefaultEmailTemplateRepository;
 import com.pluhin.repostbot.notification.repository.DefaultNotificationRepository;
@@ -24,8 +25,6 @@ import com.pluhin.util.notification.repository.NotificationRepository;
 import com.pluhin.util.notification.repository.TemplateRepository;
 import com.pluhin.util.notification.sender.EmailNotificationSender;
 import com.pluhin.util.notification.sender.NotificationSender;
-import java.util.HashMap;
-import java.util.Map;
 import org.cfg4j.provider.ConfigurationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,14 +51,15 @@ public class NotificationConfig {
 
   @Bean
   public NotificationService notificationService() {
-    Map<RecipientType, NotificationService> dictionary = new HashMap<>();
-    dictionary.put(DefaultRecipientType.EMAIL, emailNotificationService());
-    dictionary.put(DefaultRecipientType.TELEGRAM, telegramNotificationService());
-
     return new AsyncNotificationService(
         new PersistNotificationService(
             new LoggingNotificationService(
-                new DictionaryNotificationService(dictionary)
+                new DictionaryNotificationService(
+                    ImmutableMap.<RecipientType, NotificationService>builder()
+                        .put(DefaultRecipientType.EMAIL, emailNotificationService())
+                        .put(DefaultRecipientType.TELEGRAM, telegramNotificationService())
+                        .build()
+                )
             ),
             notificationRepository()
         )
