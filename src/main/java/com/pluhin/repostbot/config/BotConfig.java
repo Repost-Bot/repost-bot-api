@@ -3,6 +3,8 @@ package com.pluhin.repostbot.config;
 import com.pluhin.repostbot.bot.RepostBot;
 import com.pluhin.repostbot.bot.TelegramRepostBot;
 import org.cfg4j.provider.ConfigurationProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.ApiContextInitializer;
@@ -11,6 +13,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 @Configuration
 public class BotConfig {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(BotConfig.class);
 
   private final ConfigurationProvider configurationProvider;
   private final MessageHandlerConfig messageHandlerConfig;
@@ -36,7 +40,8 @@ public class BotConfig {
     try {
       botsApi.registerBot(bot);
     } catch (TelegramApiRequestException e) {
-      e.printStackTrace();
+      LOGGER.error("Cannot start application due to telegram error", e);
+      System.exit(1);
     }
 
     return bot;
