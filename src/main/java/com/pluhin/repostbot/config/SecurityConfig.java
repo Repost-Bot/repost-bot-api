@@ -64,9 +64,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .tokenValiditySeconds(YEAR_IN_SECONDS)
         .and()
         .authorizeRequests()
-        .antMatchers("/queue/post/**").authenticated()
-        .antMatchers("/queue/**").permitAll()
-        .antMatchers("/users/confirm").permitAll()
-        .antMatchers("/**").authenticated();
+        .antMatchers("/**").permitAll();
   }
 }
