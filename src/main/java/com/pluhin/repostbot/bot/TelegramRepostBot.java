@@ -89,7 +89,10 @@ public class TelegramRepostBot extends TelegramLongPollingBot implements RepostB
     SendPhoto sendPhoto = new SendPhoto();
     sendPhoto.setChatId(username);
     sendPhoto.setPhoto(attachment);
-    sendPhoto.setCaption(text);
+
+    if (text != null && !text.isEmpty()){
+      sendPhoto.setCaption(text);
+    }
 
     try {
       execute(sendPhoto);
@@ -107,6 +110,10 @@ public class TelegramRepostBot extends TelegramLongPollingBot implements RepostB
       mediaGroupMessage = execute(sendMediaGroup).get(0);
     } catch (TelegramApiException e) {
       throw new CannotSendMessageException("Cannot execute tg bot api method", e);
+    }
+
+    if (text == null || text.isEmpty()) {
+      return;
     }
 
     SendMessage sendMessage = new SendMessage(username, text);
